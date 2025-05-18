@@ -3,12 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { productsApi, categoriesApi } from '../../utils/api';
+import { useCart } from '../../contexts/CartContext'; // Updated import path
 
 export default function ProductsPage() {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { addToCart } = useCart(); // Get addToCart function from cart context
+
+    // Log cart context on mount for debugging
+    useEffect(() => {
+        console.log('Cart context loaded:', { addToCartExists: typeof addToCart === 'function' });
+    }, [addToCart]);
 
     // Filters
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -61,7 +68,7 @@ export default function ProductsPage() {
 
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching data:', err);
+                console.log('Error fetching data:', err);
                 setError('Failed to fetch products. Please try again later.');
                 setLoading(false);
             }
@@ -69,6 +76,30 @@ export default function ProductsPage() {
 
         fetchData();
     }, [selectedCategory, priceRange, searchQuery, minRating]);
+
+    // Handler for adding items to cart
+    const handleAddToCart = product => {
+        // Check if product data is valid
+        if (!product || !product.id) {
+            console.error('Invalid product data:', product);
+            return;
+        }
+
+        try {
+            // Check if addToCart is available
+            if (typeof addToCart !== 'function') {
+                console.log('addToCart is not a function:', addToCart);
+                return;
+            }
+
+            // Add the item to the cart
+            addToCart(product, 1);
+
+            console.log(`Product added to cart: ${product.name}`);
+        } catch (err) {
+            console.error('Error adding to cart:', err);
+        }
+    };
 
     const handleCategoryChange = e => {
         setSelectedCategory(e.target.value);
@@ -106,7 +137,7 @@ export default function ProductsPage() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8 text-white">All Products</h1>
+            <h1 className="text-3xl font-bold mb-8 text-gray-800">All Products</h1>
 
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Filters Sidebar */}
@@ -222,7 +253,12 @@ export default function ProductsPage() {
                                                 >
                                                     View Details
                                                 </Link>
-                                                <button className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm">Add to Cart</button>
+                                                <button
+                                                    onClick={() => handleAddToCart(product)}
+                                                    className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm"
+                                                >
+                                                    Add to Cart
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

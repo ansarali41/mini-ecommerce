@@ -61,17 +61,6 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
-
-            <div className="bg-white shadow-md rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Order History</h3>
-
-                <div className="text-center py-6 text-gray-500">
-                    <p>You haven&apos;t placed any orders yet.</p>
-                    <button onClick={() => router.push('/products')} className="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
-                        Browse Products
-                    </button>
-                </div>
-            </div>
         </div>
     );
 }
