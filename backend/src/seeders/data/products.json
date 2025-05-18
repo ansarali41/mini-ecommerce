@@ -1,0 +1,57 @@
+[
+    {
+        "name": "iPhone 13 Pro",
+        "description": "Latest iPhone with A15 Bionic chip and Pro camera system",
+        "price": 999.99,
+        "category": "Electronics",
+        "countInStock": 15,
+        "image": "iphone13pro.jpg",
+        "brand": "Apple",
+        "rating": 4.8,
+        "numReviews": 12
+    },
+    {
+        "name": "Samsung Galaxy S21",
+        "description": "5G smartphone with 120Hz display and powerful camera",
+        "price": 799.99,
+        "category": "Electronics",
+        "countInStock": 10,
+        "image": "galaxys21.jpg",
+        "brand": "Samsung",
+        "rating": 4.5,
+        "numReviews": 8
+    },
+    {
+        "name": "Nike Air Max 270",
+        "description": "Men's running shoes with air cushion for comfort",
+        "price": 150.0,
+        "category": "Fashion",
+        "countInStock": 25,
+        "image": "nikeairmax.jpg",
+        "brand": "Nike",
+        "rating": 4.7,
+        "numReviews": 15
+    },
+    {
+        "name": "Kindle Paperwhite",
+        "description": "Waterproof e-reader with 10 weeks of battery life",
+        "price": 129.99,
+        "category": "Electronics",
+        "countInStock": 20,
+        "image": "kindle.jpg",
+        "brand": "Amazon",
+        "rating": 4.6,
+        "numReviews": 30
+    },
+    {
+        "name": "Levi's 501 Original Fit Jeans",
+        "description": "Classic straight leg jeans for men",
+        "price": 59.99,
+        "category": "Fashion",
+        "countInStock": 35,
+        "image": "levis501.jpg",
+        "brand": "Levi's",
+        "rating": 4.4,
+        "numReviews": 25
+    }
+]

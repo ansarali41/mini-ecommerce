@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Electronics",
+        "description": "Gadgets, devices, and electronic equipment",
+        "image": "electronics.jpg"
+    },
+    {
+        "name": "Fashion",
+        "description": "Clothing, shoes, and accessories",
+        "image": "fashion.jpg"
+    },
+    {
+        "name": "Home & Kitchen",
+        "description": "Furniture, decor, and kitchen appliances",
+        "image": "home.jpg"
+    },
+    {
+        "name": "Books",
+        "description": "Fiction, non-fiction, and educational books",
+        "image": "books.jpg"
+    },
+    {
+        "name": "Beauty & Personal Care",
+        "description": "Skincare, makeup, and personal care products",
+        "image": "beauty.jpg"
+    }
+]
