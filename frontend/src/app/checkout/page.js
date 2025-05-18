@@ -215,7 +215,6 @@ export default function CheckoutPage() {
                     </div>
                     <h1 className="text-3xl font-bold mb-4 text-gray-800">Order Confirmed!</h1>
                     <p className="text-gray-700 mb-6">Thank you for your purchase. Your order #{orderId} has been placed successfully.</p>
-                    <p className="text-gray-700 mb-8">A confirmation email has been sent to {formData.email}.</p>
                     <Link href="/" className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200">
                         Continue Shopping
                     </Link>
