@@ -69,5 +69,14 @@ module.exports = (sequelize, DataTypes) => {
         }
     };
 
+    // Define associations
+    User.associate = function (models) {
+        // A User can have one Customer profile
+        User.hasOne(models.Customer, {
+            foreignKey: 'userId',
+            as: 'Customer',
+        });
+    };
+
     return User;
 };

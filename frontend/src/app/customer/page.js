@@ -35,9 +35,16 @@ export default function CustomerPage() {
 
                 setCustomer(customerData);
 
-                // Get orders for this customer
-                const ordersResponse = await ordersApi.getAll();
-                setOrders(ordersApi.processResponse(ordersResponse));
+                try {
+                    // Get orders for this customer
+                    const ordersResponse = await ordersApi.getAll();
+                    const processedOrders = ordersApi.processResponse(ordersResponse);
+                    setOrders(Array.isArray(processedOrders) ? processedOrders : []);
+                } catch (orderErr) {
+                    console.error('Error fetching orders:', orderErr);
+                    // Continue with customer profile even if orders fail to load
+                    setOrders([]);
+                }
 
                 setLoading(false);
             } catch (err) {
@@ -48,10 +55,10 @@ export default function CustomerPage() {
                 } else if (err.response && err.response.status === 401) {
                     setError('Your session has expired. Please log in again.');
                     logout(); // Logout the user if their session is invalid
-                } else if (err.message.includes('profile')) {
+                } else if (err.message && err.message.includes('profile')) {
                     setError(err.message);
                 } else {
-                    setError('Failed to load customer data. Please try again later.');
+                    setError('Failed to load customer data. Please try again.');
                 }
 
                 setLoading(false);
@@ -83,7 +90,17 @@ export default function CustomerPage() {
     };
 
     if (loading) {
-        return <div className="text-center py-10">Loading account information...</div>;
+        return (
+            <div className="text-center py-10">
+                <div
+                    className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                >
+                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                </div>
+                <p className="mt-4 text-gray-600">Loading account information...</p>
+            </div>
+        );
     }
 
     if (error) {
@@ -95,6 +112,54 @@ export default function CustomerPage() {
                         <Link href="/login" className="inline-block bg-blue-600 text-white px-4 py-2 rounded">
                             Go to Login
                         </Link>
+                    )}
+                    {!error.includes('session') && !error.includes('profile') && (
+                        <button
+                            onClick={() => {
+                                setLoading(true);
+                                setError(null);
+
+                                // Retry fetching customer data
+                                customersApi
+                                    .getProfile()
+                                    .then(response => {
+                                        const customerData = customersApi.processResponse(response);
+                                        if (customerData) {
+                                            setCustomer(customerData);
+                                            // Try to load orders as well
+                                            return ordersApi.getAll();
+                                        } else {
+                                            throw new Error('No customer profile found');
+                                        }
+                                    })
+                                    .then(ordersResponse => {
+                                        try {
+                                            const processedOrders = ordersApi.processResponse(ordersResponse);
+                                            setOrders(Array.isArray(processedOrders) ? processedOrders : []);
+                                        } catch (e) {
+                                            console.error('Error processing orders:', e);
+                                            setOrders([]);
+                                        }
+                                        setLoading(false);
+                                    })
+                                    .catch(err => {
+                                        console.error('Error retrying customer data fetch:', err);
+
+                                        if (err.response && err.response.status === 401) {
+                                            setError('Your session has expired. Please log in again.');
+                                            logout();
+                                        } else if (err.message.includes('profile')) {
+                                            setError(err.message);
+                                        } else {
+                                            setError('Failed to load customer data. Please refresh the page or try again later.');
+                                        }
+                                        setLoading(false);
+                                    });
+                            }}
+                            className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+                        >
+                            Retry
+                        </button>
                     )}
                     {error.includes('profile') && !error.includes('session') && (
                         <div className="mt-4">
@@ -128,8 +193,8 @@ export default function CustomerPage() {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow">
-                    <h1 className="text-2xl font-bold mb-6 text-center">Login to Your Account</h1>
-                    <p className="text-center mb-6">Please login to view your account details</p>
+                    <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Login to Your Account</h1>
+                    <p className="text-center mb-6 text-gray-700">Please login to view your account details</p>
                     <Link href="/login" className="block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
                         Go to Login
                     </Link>
@@ -140,12 +205,12 @@ export default function CustomerPage() {
 
     // Make sure customer object exists before rendering
     if (!customer) {
-        return <div className="text-center py-10">Unable to load customer information</div>;
+        return <div className="text-center py-10 text-gray-800">Unable to load customer information</div>;
     }
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8">My Account</h1>
+            <h1 className="text-3xl font-bold mb-8 text-white">My Account</h1>
 
             {profileSuccess && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">Profile updated successfully!</div>}
 
@@ -159,10 +224,11 @@ export default function CustomerPage() {
                                     <FaUser />
                                 </div>
                                 <div className="ml-4">
-                                    <h2 className="font-semibold">
-                                        {customer.firstName} {customer.lastName}
+                                    <h2 className="font-semibold text-gray-800">
+                                        {customer?.firstName || ''} {customer?.lastName || ''}
+                                        {!customer?.firstName && !customer?.lastName && 'Customer'}
                                     </h2>
-                                    <p className="text-sm text-gray-600">{customer.User?.email || user?.email}</p>
+                                    <p className="text-sm text-gray-600">{customer?.User?.email || user?.email || 'No email provided'}</p>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +239,7 @@ export default function CustomerPage() {
                                     <button
                                         onClick={() => setActiveTab('profile')}
                                         className={`w-full text-left px-4 py-2 rounded-lg flex items-center ${
-                                            activeTab === 'profile' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                                            activeTab === 'profile' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                     >
                                         <FaUser className="mr-3" /> Profile
@@ -183,7 +249,7 @@ export default function CustomerPage() {
                                     <button
                                         onClick={() => setActiveTab('orders')}
                                         className={`w-full text-left px-4 py-2 rounded-lg flex items-center ${
-                                            activeTab === 'orders' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                                            activeTab === 'orders' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                     >
                                         <FaBox className="mr-3" /> Orders
@@ -193,7 +259,7 @@ export default function CustomerPage() {
                                     <button
                                         onClick={() => setActiveTab('address')}
                                         className={`w-full text-left px-4 py-2 rounded-lg flex items-center ${
-                                            activeTab === 'address' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                                            activeTab === 'address' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                     >
                                         <FaAddressCard className="mr-3" /> Address
@@ -214,14 +280,14 @@ export default function CustomerPage() {
                     <div className="bg-white rounded-lg shadow p-6">
                         {activeTab === 'profile' && (
                             <div>
-                                <h2 className="text-xl font-bold mb-6">Profile Information</h2>
+                                <h2 className="text-xl font-bold mb-6 text-gray-800">Profile Information</h2>
                                 <CustomerProfileForm customer={customer} onSuccess={handleProfileUpdate} />
                             </div>
                         )}
 
                         {activeTab === 'orders' && (
                             <div>
-                                <h2 className="text-xl font-bold mb-6">Order History</h2>
+                                <h2 className="text-xl font-bold mb-6 text-gray-800">Order History</h2>
 
                                 {orders.length === 0 ? (
                                     <div className="text-center py-8">
@@ -233,43 +299,50 @@ export default function CustomerPage() {
                                 ) : (
                                     <div className="space-y-6">
                                         {orders.map(order => (
-                                            <div key={order.id} className="border rounded-lg overflow-hidden">
+                                            <div key={order?.id || Math.random()} className="border rounded-lg overflow-hidden">
                                                 <div className="bg-gray-50 p-4 flex justify-between items-center">
                                                     <div>
-                                                        <span className="text-sm text-gray-600">Order #{order.id}</span>
-                                                        <div className="font-medium">{new Date(order.createdAt).toLocaleDateString()}</div>
+                                                        <span className="text-sm text-gray-600">Order #{order?.id || 'N/A'}</span>
+                                                        <div className="font-medium text-gray-800">{order?.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}</div>
                                                     </div>
-                                                    <div>
+                                                    <div className="flex items-center gap-3">
                                                         <span
                                                             className={`inline-block px-3 py-1 rounded-full text-xs ${
-                                                                order.status === 'delivered'
+                                                                order?.isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                            }`}
+                                                        >
+                                                            {order?.isPaid ? 'Paid' : 'Payment Pending'}
+                                                        </span>
+                                                        <span
+                                                            className={`inline-block px-3 py-1 rounded-full text-xs ${
+                                                                order?.status === 'delivered'
                                                                     ? 'bg-green-100 text-green-800'
-                                                                    : order.status === 'processing'
+                                                                    : order?.status === 'processing'
                                                                     ? 'bg-blue-100 text-blue-800'
                                                                     : 'bg-gray-100 text-gray-800'
                                                             }`}
                                                         >
-                                                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                                            {order?.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Processing'}
                                                         </span>
                                                     </div>
                                                 </div>
 
                                                 <div className="p-4">
-                                                    {order.OrderItems &&
+                                                    {Array.isArray(order?.OrderItems) &&
                                                         order.OrderItems.map(item => (
-                                                            <div key={item.id} className="flex justify-between py-2 border-b last:border-b-0">
+                                                            <div key={item?.id || Math.random()} className="flex justify-between py-2 border-b last:border-b-0">
                                                                 <div>
-                                                                    <div className="font-medium">{item.Product?.name || 'Product'}</div>
-                                                                    <div className="text-sm text-gray-600">Quantity: {item.quantity}</div>
+                                                                    <div className="font-medium text-gray-800">{item?.Product?.name || item?.productName || 'Product'}</div>
+                                                                    <div className="text-sm text-gray-600">Quantity: {item?.quantity || 0}</div>
                                                                 </div>
-                                                                <div className="font-medium">${parseFloat(item.price || 0).toFixed(2)}</div>
+                                                                <div className="font-medium text-gray-800">${parseFloat(item?.price || 0).toFixed(2)}</div>
                                                             </div>
                                                         ))}
                                                 </div>
 
                                                 <div className="bg-gray-50 p-4 flex justify-between">
-                                                    <span className="font-semibold">Total</span>
-                                                    <span className="font-semibold">${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+                                                    <span className="font-semibold text-gray-800">Total</span>
+                                                    <span className="font-semibold text-gray-800">${parseFloat(order?.totalAmount || order?.totalPrice || 0).toFixed(2)}</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -280,19 +353,37 @@ export default function CustomerPage() {
 
                         {activeTab === 'address' && (
                             <div>
-                                <h2 className="text-xl font-bold mb-6">Address Information</h2>
+                                <h2 className="text-xl font-bold mb-6 text-gray-800">Address Information</h2>
                                 <div className="bg-gray-50 p-6 rounded-lg">
                                     <div className="mb-4">
                                         <h3 className="font-semibold text-gray-800">Shipping Address</h3>
-                                        <p className="mt-2">
-                                            {customer.firstName} {customer.lastName}
-                                        </p>
-                                        <p>{customer.address}</p>
-                                        <p>
-                                            {customer.city}, {customer.state} {customer.zipCode}
-                                        </p>
-                                        <p>{customer.country}</p>
-                                        <p className="mt-1">Phone: {customer.phone}</p>
+                                        <div className="mt-2">
+                                            {customer?.firstName && customer?.lastName ? (
+                                                <p className="text-gray-700">
+                                                    {customer.firstName} {customer.lastName}
+                                                </p>
+                                            ) : (
+                                                <p className="text-gray-500 italic">No name provided</p>
+                                            )}
+
+                                            {customer?.address ? <p className="text-gray-700">{customer.address}</p> : <p className="text-gray-500 italic">No address provided</p>}
+
+                                            {customer?.city || customer?.state || customer?.zipCode ? (
+                                                <p className="text-gray-700">
+                                                    {customer?.city || ''}
+                                                    {customer?.city && (customer?.state || customer?.zipCode) ? ', ' : ''}
+                                                    {customer?.state || ''} {customer?.zipCode || ''}
+                                                </p>
+                                            ) : null}
+
+                                            {customer?.country && <p className="text-gray-700">{customer.country}</p>}
+
+                                            {customer?.phone ? (
+                                                <p className="mt-1 text-gray-700">Phone: {customer.phone}</p>
+                                            ) : (
+                                                <p className="text-gray-500 italic mt-1">No phone number provided</p>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="border-t border-gray-200 pt-4 mt-4">

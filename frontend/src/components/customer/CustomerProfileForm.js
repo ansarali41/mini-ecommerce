@@ -46,7 +46,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto bg-white p-6 rounded-lg shadow">
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto bg-white text-gray-800 p-6 rounded-lg shadow">
             {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -60,7 +60,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required
                     />
                 </div>
@@ -75,7 +75,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required
                     />
                 </div>
@@ -91,7 +91,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     required
                 />
             </div>
@@ -107,7 +107,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                         name="city"
                         value={formData.city}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required
                     />
                 </div>
@@ -122,7 +122,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                         name="state"
                         value={formData.state}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required
                     />
                 </div>
@@ -139,7 +139,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                         name="zipCode"
                         value={formData.zipCode}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required
                     />
                 </div>
@@ -154,7 +154,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                         name="country"
                         value={formData.country}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required
                     />
                 </div>
@@ -170,7 +170,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     required
                 />
             </div>
