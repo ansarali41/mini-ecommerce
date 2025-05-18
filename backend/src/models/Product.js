@@ -51,6 +51,14 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'id',
                 },
             },
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'Users',
+                    key: 'id',
+                },
+            },
         },
         {
             timestamps: true,
@@ -85,6 +93,12 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'categoryId',
             as: 'category',
             onDelete: 'CASCADE',
+        });
+
+        // A Product belongs to a User (the seller/creator)
+        Product.belongsTo(models.User, {
+            foreignKey: 'userId',
+            as: 'seller',
         });
 
         // Product can have many OrderItems

@@ -129,6 +129,14 @@ const Navbar = () => {
                                             <FaBoxOpen className="mr-2 text-gray-500" size={14} />
                                             My Orders
                                         </Link>
+                                        <Link
+                                            href="/products/manage"
+                                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            onClick={() => setIsUserMenuOpen(false)}
+                                        >
+                                            <FaTags className="mr-2 text-gray-500" size={14} />
+                                            Manage Products
+                                        </Link>
                                         <div className="border-t border-gray-100">
                                             <button onClick={handleLogout} className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                                                 <FaSignOutAlt className="mr-2" size={14} />
@@ -213,6 +221,10 @@ const Navbar = () => {
                                 <Link href="/orders" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
                                     <FaBoxOpen className="mr-2" size={14} />
                                     My Orders
+                                </Link>
+                                <Link href="/products/manage" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaTags className="mr-2" size={14} />
+                                    Manage Products
                                 </Link>
                             </div>
                             <div className="border-t border-blue-600 pt-2">

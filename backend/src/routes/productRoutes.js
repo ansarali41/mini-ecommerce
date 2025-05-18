@@ -13,11 +13,10 @@ router.get('/', getAllProducts);
 // Get product by ID - public
 router.get('/:id', getProductById);
 
-// Create product - admin only
+// Create product - authenticated user
 router.post(
     '/',
     authenticate,
-    isAdmin,
     [
         body('name').notEmpty().withMessage('Product name is required'),
         body('price').isNumeric().withMessage('Price must be a number'),
@@ -27,10 +26,10 @@ router.post(
     createProduct,
 );
 
-// Update product - admin only
-router.put('/:id', authenticate, isAdmin, updateProduct);
+// Update product - authenticated user
+router.put('/:id', authenticate, updateProduct);
 
-// Delete product - admin only
-router.delete('/:id', authenticate, isAdmin, deleteProduct);
+// Delete product - authenticated user
+router.delete('/:id', authenticate, deleteProduct);
 
 module.exports = router;

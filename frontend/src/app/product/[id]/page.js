@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { productsApi } from '../../../utils/api';
 import { useCart } from '../../../contexts/CartContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import { use } from 'react';
+import Link from 'next/link';
+import { FaEdit } from 'react-icons/fa';
 
 export default function ProductPage({ params }) {
     const [product, setProduct] = useState(null);
@@ -15,6 +18,7 @@ export default function ProductPage({ params }) {
     const unwrappedParams = use(params);
     const { id } = unwrappedParams;
     const { addToCart } = useCart();
+    const { user, isAuthenticated } = useAuth();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -82,15 +86,21 @@ export default function ProductPage({ params }) {
                 <div className="w-full md:w-1/2">
                     <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
 
-                    <div className="flex items-center mb-4">
+                    <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center text-yellow-400">
                             {[...Array(5)].map((_, i) => (
                                 <span key={i} className={i < Math.floor(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}>
                                     ★
                                 </span>
                             ))}
+                            <span className="ml-2 text-gray-600">({product.rating ? parseFloat(product.rating).toFixed(1) : '0.0'})</span>
                         </div>
-                        <span className="ml-2 text-gray-600">({product.rating ? parseFloat(product.rating).toFixed(1) : '0.0'})</span>
+
+                        {isAuthenticated && user && product.userId === user.id && (
+                            <Link href={`/products/manage?edit=${product.id}`} className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700">
+                                <FaEdit /> Edit Product
+                            </Link>
+                        )}
                     </div>
 
                     <div className="text-2xl font-bold mb-4 text-blue-600">${parseFloat(product.price || 0).toFixed(2)}</div>

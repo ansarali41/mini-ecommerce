@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 // Get all products with filtering
 const getAllProducts = async (req, res) => {
     try {
-        const { category, minPrice, maxPrice, minRating, search, page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
+        const { category, minPrice, maxPrice, minRating, search, userId, page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
 
         // Build query condition
         const whereCondition = {};
@@ -27,6 +27,11 @@ const getAllProducts = async (req, res) => {
         // Filter by rating
         if (minRating) {
             whereCondition.rating = { [Op.gte]: parseFloat(minRating) };
+        }
+
+        // Filter by userId if provided
+        if (userId) {
+            whereCondition.userId = userId;
         }
 
         // Search by name or description
@@ -50,6 +55,11 @@ const getAllProducts = async (req, res) => {
                     model: Category,
                     as: 'category',
                     where: Object.keys(categoryCondition).length ? categoryCondition : undefined,
+                },
+                {
+                    model: require('../models').User,
+                    as: 'seller',
+                    attributes: ['id', 'username', 'email'],
                 },
             ],
             order: [[sortField, sortDirection]],
@@ -83,7 +93,14 @@ const getProductById = async (req, res) => {
         const { id } = req.params;
 
         const product = await Product.findByPk(id, {
-            include: [{ model: Category, as: 'category' }],
+            include: [
+                { model: Category, as: 'category' },
+                {
+                    model: require('../models').User,
+                    as: 'seller',
+                    attributes: ['id', 'username', 'email'],
+                },
+            ],
         });
 
         if (!product) {
@@ -111,6 +128,7 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
     try {
         const { name, description, price, stock, image, categoryId, rating } = req.body;
+        const userId = req.user.id; // Get the authenticated user ID
 
         // Check if category exists
         const category = await Category.findByPk(categoryId);
@@ -130,6 +148,7 @@ const createProduct = async (req, res) => {
             image,
             categoryId,
             rating: rating || 0,
+            userId, // Associate product with the user who created it
         });
 
         res.status(201).json({
@@ -152,6 +171,7 @@ const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, description, price, stock, image, categoryId, rating } = req.body;
+        const userId = req.user.id;
 
         // Find the product
         const product = await Product.findByPk(id);
@@ -159,6 +179,14 @@ const updateProduct = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Product not found',
+            });
+        }
+
+        // Check if user is the owner of the product or an admin
+        if (product.userId !== userId && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'You do not have permission to update this product',
             });
         }
 
@@ -203,6 +231,7 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
+        const userId = req.user.id;
 
         // Find the product
         const product = await Product.findByPk(id);
@@ -210,6 +239,14 @@ const deleteProduct = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Product not found',
+            });
+        }
+
+        // Check if user is the owner of the product or an admin
+        if (product.userId !== userId && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'You do not have permission to delete this product',
             });
         }
 
