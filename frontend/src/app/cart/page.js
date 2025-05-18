@@ -3,11 +3,13 @@
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FaTrash, FaArrowLeft, FaShoppingCart } from 'react-icons/fa';
 
 export default function CartPage() {
     const { cart, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
 
     const handleQuantityChange = (productId, newQuantity) => {
         updateQuantity(productId, parseInt(newQuantity));
@@ -25,12 +27,18 @@ export default function CartPage() {
 
     const proceedToCheckout = () => {
         setIsSubmitting(true);
-        // We'd typically validate the cart here
-        setTimeout(() => {
-            setIsSubmitting(false);
-            // Redirect to checkout
-            window.location.href = '/checkout';
-        }, 1000);
+
+        try {
+            // Redirect to checkout - using Next.js router for proper navigation
+            router.push('/checkout');
+        } catch (error) {
+            console.error('Error navigating to checkout', error);
+        } finally {
+            // Reset submitting state after a short delay
+            setTimeout(() => {
+                setIsSubmitting(false);
+            }, 300);
+        }
     };
 
     if (cart.length === 0) {
@@ -105,7 +113,7 @@ export default function CartPage() {
                                     {/* Subtotal */}
                                     <div className="text-gray-600">
                                         <div className="md:hidden text-sm text-gray-600 mb-1">Subtotal:</div>
-                                        <span className="font-semibold">${parseFloat(item.price || 0) * parseInt(item.quantity || 1).toFixed(2)}</span>
+                                        <span className="font-semibold">${(parseFloat(item.price || 0) * parseInt(item.quantity || 1)).toFixed(2)}</span>
                                     </div>
                                 </div>
                             </div>

@@ -1,7 +1,7 @@
 // Category model
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+// Remove this line: const sequelize = require('../config/database');
 
 module.exports = (sequelize, DataTypes) => {
     const Category = sequelize.define('Category', {

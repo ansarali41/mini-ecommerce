@@ -54,14 +54,17 @@ module.exports = (sequelize, DataTypes) => {
         },
     );
 
-    Order.associate = function (models) {
-        // An Order belongs to a Customer
+    // Make sure the associations are properly defined in the Order model
+    Order.associate = models => {
         Order.belongsTo(models.Customer, {
             foreignKey: 'customerId',
             as: 'customer',
         });
 
-        // Add any other associations here
+        Order.hasMany(models.OrderItem, {
+            foreignKey: 'orderId',
+            as: 'OrderItems',
+        });
     };
 
     return Order;

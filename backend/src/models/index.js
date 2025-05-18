@@ -3,16 +3,11 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config/database')[env];
+// Import the Sequelize instance directly
+const sequelize = require('../config/database');
 const db = {};
 
-// Create Sequelize instance
-let sequelize;
-if (config.use_env_variable) {
-    sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-    sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+// No need to create a new Sequelize instance, use the imported one
 
 // Import all model files in the current directory
 fs.readdirSync(__dirname)

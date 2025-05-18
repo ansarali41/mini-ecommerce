@@ -103,7 +103,15 @@ export const categoriesApi = {
 // API endpoints for orders
 export const ordersApi = {
     create: orderData => api.post('/orders', orderData),
-    getAll: () => api.get('/orders'),
+    getAll: async () => {
+        try {
+            const response = await api.get('/orders');
+            return response;
+        } catch (error) {
+            console.error('Error in ordersApi.getAll:', error);
+            throw error;
+        }
+    },
     getById: id => api.get(`/orders/${id}`),
     cancel: id => api.put(`/orders/${id}/cancel`),
     // Helper method to extract orders from the response

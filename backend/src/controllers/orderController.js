@@ -11,6 +11,25 @@ const createOrder = async (req, res) => {
         const userId = req.user.id;
         const { items, paymentMethod, customerId } = req.body;
 
+        console.log('Create order request:', { userId, customerId, items, paymentMethod });
+
+        // Validate request data
+        if (!customerId) {
+            await transaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: 'Customer ID is required',
+            });
+        }
+
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            await transaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: 'Order must contain at least one item',
+            });
+        }
+
         // Validate customerId
         const customer = await Customer.findOne({
             where: { id: customerId, userId },
@@ -24,17 +43,8 @@ const createOrder = async (req, res) => {
             });
         }
 
-        // Validate items
-        if (!items || !Array.isArray(items) || items.length === 0) {
-            await transaction.rollback();
-            return res.status(400).json({
-                success: false,
-                message: 'Order must contain at least one item',
-            });
-        }
-
         // Calculate total amount and validate stock
-        let totalAmount = 0;
+        let totalPrice = 0;
         const orderItems = [];
 
         for (const item of items) {
@@ -61,7 +71,7 @@ const createOrder = async (req, res) => {
 
             // Calculate subtotal
             const subtotal = product.price * quantity;
-            totalAmount += subtotal;
+            totalPrice += subtotal;
 
             // Add to order items
             orderItems.push({
@@ -75,15 +85,22 @@ const createOrder = async (req, res) => {
             await product.update({ stock: product.stock - quantity }, { transaction });
         }
 
+        // Generate a unique order number (format: ORD-YYYYMMDD-XXXXX)
+        const date = new Date();
+        const dateStr = date.getFullYear().toString() + (date.getMonth() + 1).toString().padStart(2, '0') + date.getDate().toString().padStart(2, '0');
+        const randomStr = Math.floor(10000 + Math.random() * 90000).toString(); // 5-digit random number
+        const orderNumber = `ORD-${dateStr}-${randomStr}`;
+
         // Create order
         const order = await Order.create(
             {
                 userId,
                 customerId,
-                totalAmount,
+                orderNumber,
+                totalPrice: totalPrice, // Changed from totalAmount to totalPrice to match the model
                 status: 'pending',
                 paymentMethod,
-                paymentStatus: 'pending',
+                isPaid: false, // Use isPaid from the model instead of paymentStatus
             },
             { transaction },
         );
@@ -125,16 +142,30 @@ const getUserOrders = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const orders = await Order.findAll({
+        // First find the customer associated with this user
+        const customer = await Customer.findOne({
             where: { userId },
+        });
+
+        if (!customer) {
+            return res.status(404).json({
+                success: false,
+                message: 'No customer profile found for this user',
+            });
+        }
+
+        // Get the orders with their items
+        const orders = await Order.findAll({
+            where: { customerId: customer.id },
             include: [
                 {
                     model: OrderItem,
-                    as: 'items',
+                    as: 'OrderItems',
                     include: [
                         {
                             model: Product,
                             as: 'product',
+                            attributes: ['id', 'name', 'price', 'image'],
                         },
                     ],
                 },
@@ -142,16 +173,41 @@ const getUserOrders = async (req, res) => {
             order: [['createdAt', 'DESC']],
         });
 
-        res.status(200).json({
+        // Return formatted orders
+        return res.json({
             success: true,
-            count: orders.length,
-            orders,
+            orders: orders.map(order => {
+                // Format order items to include product details
+                const formattedItems = order.OrderItems
+                    ? order.OrderItems.map(item => ({
+                          id: item.id,
+                          productId: item.productId,
+                          productName: item.product ? item.product.name : 'Product',
+                          price: item.price,
+                          quantity: item.quantity,
+                          image: item.product ? item.product.image : null,
+                      }))
+                    : [];
+
+                return {
+                    id: order.id,
+                    orderNumber: order.orderNumber,
+                    customerId: order.customerId,
+                    status: order.status,
+                    totalPrice: order.totalPrice,
+                    paymentMethod: order.paymentMethod,
+                    paymentStatus: order.paymentStatus,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    OrderItems: formattedItems,
+                };
+            }),
         });
     } catch (error) {
-        console.log('Error getting user orders:', error);
-        res.status(500).json({
+        console.error('Error fetching user orders:', error);
+        return res.status(500).json({
             success: false,
-            message: 'Failed to get orders',
+            message: 'Error fetching orders',
             error: error.message,
         });
     }

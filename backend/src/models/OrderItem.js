@@ -55,15 +55,16 @@ module.exports = (sequelize, DataTypes) => {
         },
     );
 
-    OrderItem.associate = function (models) {
-        // Add associations if needed
+    // Make sure the associations are properly defined in the OrderItem model
+    OrderItem.associate = models => {
         OrderItem.belongsTo(models.Order, {
             foreignKey: 'orderId',
-            onDelete: 'CASCADE'
+            as: 'order',
         });
-        
+
         OrderItem.belongsTo(models.Product, {
-            foreignKey: 'productId'
+            foreignKey: 'productId',
+            as: 'product',
         });
     };
 

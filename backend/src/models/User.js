@@ -2,7 +2,8 @@
 
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
-const sequelize = require('../config/database');
+// The sequelize instance will be provided by models/index.js
+// Remove this line: const sequelize = require('../config/database');
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define(

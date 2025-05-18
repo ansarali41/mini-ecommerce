@@ -105,44 +105,88 @@ export default function CheckoutPage() {
         try {
             setIsLoading(true);
 
-            // Create order data
+            // First, check if the user is authenticated
+            if (!isAuthenticated || !user) {
+                router.push('/login?redirect=checkout');
+                return;
+            }
+
+            console.log('Starting checkout process...');
+
+            // Step 1: First create/update customer profile
+            const customerData = {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                address: formData.address,
+                city: formData.city,
+                state: formData.state,
+                zipCode: formData.zipCode,
+                country: formData.country,
+                phone: formData.phone,
+            };
+
+            console.log('Creating/updating customer profile:', customerData);
+            const customerResponse = await customersApi.createUpdateProfile(customerData);
+            console.log('Customer profile response:', customerResponse);
+
+            if (!customerResponse || !customerResponse.data || !customerResponse.data.customer) {
+                throw new Error('Failed to create or update customer profile');
+            }
+
+            const customer = customerResponse.data.customer;
+            console.log('Customer profile created/updated:', customer);
+
+            // Step 2: Create the order with the customer ID
             const orderData = {
-                customer: {
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    email: formData.email,
-                    address: formData.address,
-                    city: formData.city,
-                    state: formData.state,
-                    zipCode: formData.zipCode,
-                    country: formData.country,
-                    phone: formData.phone,
-                },
+                customerId: customer.id,
                 items: cart.map(item => ({
                     productId: item.id,
                     quantity: item.quantity,
-                    price: item.price,
                 })),
                 paymentMethod: formData.paymentMethod,
-                totalAmount: totalPrice,
-                tax: totalPrice * 0.07,
-                shippingCost: 0,
-                userId: user?.id, // Add user ID if available
             };
 
-            // Submit order directly to backend API
-            const response = await ordersApi.create(orderData);
+            console.log('Creating order:', orderData);
+            const orderResponse = await ordersApi.create(orderData);
+            console.log('Order response:', orderResponse);
 
-            // Handle both response formats
-            const orderResponse = response.data.order || response.data;
+            if (!orderResponse || !orderResponse.data) {
+                throw new Error('Failed to create order');
+            }
 
-            // Order successfully placed
-            setOrderId(orderResponse.id || orderResponse._id);
+            // Extract order ID
+            const order = orderResponse.data.order || orderResponse.data;
+            const newOrderId = order.id || order._id;
+
+            console.log('Order created with ID:', newOrderId);
+
+            // Set order ID and mark as placed
+            setOrderId(newOrderId);
             setOrderPlaced(true);
+
+            // Clear the cart
             clearCart();
+
+            console.log('Order process completed successfully!');
         } catch (error) {
-            console.log('Error placing order:', error);
-            alert('There was an error placing your order. Please try again.');
+            console.error('Error placing order:', error);
+
+            // More detailed error handling
+            let errorMessage = 'There was an error placing your order. Please try again.';
+
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+                errorMessage = error.response.data.message || errorMessage;
+
+                // Handle specific error cases
+                if (error.response.status === 404 && error.response.data.message.includes('Customer not found')) {
+                    errorMessage = 'Your customer profile is not found. Please reload the page and try again.';
+                } else if (error.response.status === 400 && error.response.data.message.includes('Insufficient stock')) {
+                    errorMessage = 'Some items in your cart are out of stock. Please review your cart and try again.';
+                }
+            }
+
+            alert(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -169,9 +213,9 @@ export default function CheckoutPage() {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FaCheck className="text-green-600 text-3xl" />
                     </div>
-                    <h1 className="text-3xl font-bold mb-4">Order Confirmed!</h1>
-                    <p className="text-gray-600 mb-6">Thank you for your purchase. Your order #{orderId} has been placed successfully.</p>
-                    <p className="text-gray-600 mb-8">A confirmation email has been sent to {formData.email}.</p>
+                    <h1 className="text-3xl font-bold mb-4 text-gray-800">Order Confirmed!</h1>
+                    <p className="text-gray-700 mb-6">Thank you for your purchase. Your order #{orderId} has been placed successfully.</p>
+                    <p className="text-gray-700 mb-8">A confirmation email has been sent to {formData.email}.</p>
                     <Link href="/" className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200">
                         Continue Shopping
                     </Link>
@@ -182,18 +226,18 @@ export default function CheckoutPage() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+            <h1 className="text-3xl font-bold mb-8 text-gray-800">Checkout</h1>
 
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Customer Information Form */}
                 <div className="lg:w-2/3">
                     <form onSubmit={handleSubmit}>
                         <div className="bg-white rounded-lg shadow p-6 mb-6">
-                            <h2 className="text-xl font-bold mb-4">Customer Information</h2>
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Customer Information</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <label htmlFor="firstName" className="block text-sm font-medium mb-1">
+                                    <label htmlFor="firstName" className="block text-sm font-medium mb-1 text-gray-700">
                                         First Name*
                                     </label>
                                     <input
@@ -202,7 +246,7 @@ export default function CheckoutPage() {
                                         name="firstName"
                                         value={formData.firstName}
                                         onChange={handleInputChange}
-                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                             errors.firstName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     />
@@ -210,7 +254,7 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="lastName" className="block text-sm font-medium mb-1">
+                                    <label htmlFor="lastName" className="block text-sm font-medium mb-1 text-gray-700">
                                         Last Name*
                                     </label>
                                     <input
@@ -219,7 +263,7 @@ export default function CheckoutPage() {
                                         name="lastName"
                                         value={formData.lastName}
                                         onChange={handleInputChange}
-                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                             errors.lastName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     />
@@ -228,7 +272,7 @@ export default function CheckoutPage() {
                             </div>
 
                             <div className="mb-4">
-                                <label htmlFor="email" className="block text-sm font-medium mb-1">
+                                <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-700">
                                     Email Address*
                                 </label>
                                 <input
@@ -237,7 +281,7 @@ export default function CheckoutPage() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                         errors.email ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 />
@@ -245,7 +289,7 @@ export default function CheckoutPage() {
                             </div>
 
                             <div className="mb-4">
-                                <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                                <label htmlFor="phone" className="block text-sm font-medium mb-1 text-gray-700">
                                     Phone Number*
                                 </label>
                                 <input
@@ -254,7 +298,7 @@ export default function CheckoutPage() {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleInputChange}
-                                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                         errors.phone ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 />
@@ -263,10 +307,10 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="bg-white rounded-lg shadow p-6 mb-6">
-                            <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Shipping Address</h2>
 
                             <div className="mb-4">
-                                <label htmlFor="address" className="block text-sm font-medium mb-1">
+                                <label htmlFor="address" className="block text-sm font-medium mb-1 text-gray-700">
                                     Street Address*
                                 </label>
                                 <input
@@ -275,7 +319,7 @@ export default function CheckoutPage() {
                                     name="address"
                                     value={formData.address}
                                     onChange={handleInputChange}
-                                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                         errors.address ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 />
@@ -284,7 +328,7 @@ export default function CheckoutPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <label htmlFor="city" className="block text-sm font-medium mb-1">
+                                    <label htmlFor="city" className="block text-sm font-medium mb-1 text-gray-700">
                                         City*
                                     </label>
                                     <input
@@ -293,7 +337,7 @@ export default function CheckoutPage() {
                                         name="city"
                                         value={formData.city}
                                         onChange={handleInputChange}
-                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                             errors.city ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     />
@@ -301,7 +345,7 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="state" className="block text-sm font-medium mb-1">
+                                    <label htmlFor="state" className="block text-sm font-medium mb-1 text-gray-700">
                                         State/Province*
                                     </label>
                                     <input
@@ -310,7 +354,7 @@ export default function CheckoutPage() {
                                         name="state"
                                         value={formData.state}
                                         onChange={handleInputChange}
-                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                             errors.state ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     />
@@ -320,7 +364,7 @@ export default function CheckoutPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="zipCode" className="block text-sm font-medium mb-1">
+                                    <label htmlFor="zipCode" className="block text-sm font-medium mb-1 text-gray-700">
                                         ZIP/Postal Code*
                                     </label>
                                     <input
@@ -329,7 +373,7 @@ export default function CheckoutPage() {
                                         name="zipCode"
                                         value={formData.zipCode}
                                         onChange={handleInputChange}
-                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                             errors.zipCode ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     />
@@ -337,7 +381,7 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="country" className="block text-sm font-medium mb-1">
+                                    <label htmlFor="country" className="block text-sm font-medium mb-1 text-gray-700">
                                         Country*
                                     </label>
                                     <input
@@ -346,7 +390,7 @@ export default function CheckoutPage() {
                                         name="country"
                                         value={formData.country}
                                         onChange={handleInputChange}
-                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                                             errors.country ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     />
@@ -356,7 +400,7 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="bg-white rounded-lg shadow p-6 mb-6">
-                            <h2 className="text-xl font-bold mb-4">Payment Method</h2>
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Payment Method</h2>
 
                             <div className="space-y-4">
                                 <div className="flex items-center">
@@ -369,7 +413,7 @@ export default function CheckoutPage() {
                                         onChange={handleInputChange}
                                         className="mr-2"
                                     />
-                                    <label htmlFor="credit_card" className="flex items-center">
+                                    <label htmlFor="credit_card" className="flex items-center text-gray-700">
                                         <FaCreditCard className="mr-2 text-blue-600" />
                                         Credit Card
                                     </label>
@@ -385,7 +429,7 @@ export default function CheckoutPage() {
                                         onChange={handleInputChange}
                                         className="mr-2"
                                     />
-                                    <label htmlFor="paypal" className="flex items-center">
+                                    <label htmlFor="paypal" className="flex items-center text-gray-700">
                                         <span className="mr-2 text-blue-700 font-bold">Pay</span>
                                         <span className="text-blue-400 font-bold">Pal</span>
                                     </label>
@@ -393,7 +437,7 @@ export default function CheckoutPage() {
                             </div>
 
                             <div className="mt-6 border-t pt-6">
-                                <p className="text-sm text-gray-600 mb-4">For demo purposes, no actual payment will be processed.</p>
+                                <p className="text-sm text-gray-700 mb-4">For demo purposes, no actual payment will be processed.</p>
                             </div>
                         </div>
 
@@ -416,16 +460,16 @@ export default function CheckoutPage() {
                 {/* Order Summary */}
                 <div className="lg:w-1/3">
                     <div className="bg-white rounded-lg shadow p-6 sticky top-6">
-                        <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Order Summary</h2>
 
                         <div className="mb-4">
                             {cart.map(item => (
                                 <div key={item.id} className="flex justify-between py-2 border-b">
                                     <div className="flex items-center">
                                         <div className="mr-2 text-gray-700">{item.quantity}x</div>
-                                        <div className="font-medium">{item.name}</div>
+                                        <div className="font-medium text-gray-800">{item.name}</div>
                                     </div>
-                                    <div className="font-medium">${(parseFloat(item.price || 0) * parseInt(item.quantity || 1)).toFixed(2)}</div>
+                                    <div className="font-medium text-gray-800">${(parseFloat(item.price || 0) * parseInt(item.quantity || 1)).toFixed(2)}</div>
                                 </div>
                             ))}
                         </div>
@@ -433,21 +477,21 @@ export default function CheckoutPage() {
                         <div className="border-b pb-4 mb-4">
                             <div className="flex justify-between mb-2">
                                 <span className="text-gray-600">Subtotal</span>
-                                <span>${parseFloat(totalPrice || 0).toFixed(2)}</span>
+                                <span className="text-gray-800">${parseFloat(totalPrice || 0).toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between mb-2">
                                 <span className="text-gray-600">Shipping</span>
-                                <span>Free</span>
+                                <span className="text-gray-800">Free</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Tax (7%)</span>
-                                <span>${(parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
+                                <span className="text-gray-800">${(parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
                             </div>
                         </div>
 
                         <div className="flex justify-between">
-                            <span className="font-bold">Total</span>
-                            <span className="font-bold text-lg">${(parseFloat(totalPrice || 0) + parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
+                            <span className="font-bold text-gray-800">Total</span>
+                            <span className="font-bold text-lg text-gray-800">${(parseFloat(totalPrice || 0) + parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
                         </div>
                     </div>
                 </div>

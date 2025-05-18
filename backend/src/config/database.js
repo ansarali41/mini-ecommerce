@@ -33,7 +33,11 @@ const testConnection = async () => {
 
 testConnection();
 
-module.exports = {
+// Export the Sequelize instance
+module.exports = sequelize;
+
+// Also provide config for Sequelize CLI
+module.exports.config = {
     development: {
         username: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD || '',
