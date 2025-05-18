@@ -20,27 +20,34 @@ export default function ProductsPage() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Fetch products with filters
-                const queryParams = new URLSearchParams();
+
+                // Prepare filter params
+                const params = {};
 
                 if (selectedCategory) {
-                    queryParams.append('categoryId', selectedCategory);
+                    params.categoryId = selectedCategory;
                 }
 
-                if (priceRange.min > 0 || priceRange.max < 1000) {
-                    queryParams.append('minPrice', priceRange.min);
-                    queryParams.append('maxPrice', priceRange.max);
+                if (priceRange.min > 0) {
+                    params.minPrice = priceRange.min;
+                }
+
+                if (priceRange.max < 1000) {
+                    params.maxPrice = priceRange.max;
                 }
 
                 if (searchQuery) {
-                    queryParams.append('search', searchQuery);
+                    params.search = searchQuery;
                 }
 
                 if (minRating > 0) {
-                    queryParams.append('minRating', minRating);
+                    params.minRating = minRating;
                 }
 
-                const productsResponse = await productsApi.getAll();
+                console.log('Applying filters:', params);
+
+                // Fetch products with filters
+                const productsResponse = await productsApi.getAll(params);
                 console.log('Products API Response:', productsResponse);
 
                 // Ensure products is always an array
@@ -54,7 +61,7 @@ export default function ProductsPage() {
 
                 setLoading(false);
             } catch (err) {
-                console.log('Error fetching data:', err);
+                console.error('Error fetching data:', err);
                 setError('Failed to fetch products. Please try again later.');
                 setLoading(false);
             }
@@ -90,38 +97,42 @@ export default function ProductsPage() {
     };
 
     if (loading) {
-        return <div className="text-center py-10">Loading products...</div>;
+        return <div className="text-center py-10 text-gray-800 font-medium bg-gray-50 border border-gray-200 rounded-lg shadow-sm">Loading products...</div>;
     }
 
     if (error) {
-        return <div className="text-center py-10 text-red-600">{error}</div>;
+        return <div className="text-center py-10 text-red-700 font-medium bg-red-50 rounded-lg border border-red-200 mx-auto max-w-2xl p-4 shadow-sm">{error}</div>;
     }
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8">All Products</h1>
+            <h1 className="text-3xl font-bold mb-8 text-white">All Products</h1>
 
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Filters Sidebar */}
-                <div className="w-full md:w-1/4 bg-gray-50 p-4 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4">Filters</h2>
+                <div className="w-full md:w-1/4 bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h2 className="text-xl font-semibold mb-4 text-gray-800">Filters</h2>
 
                     {/* Search */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">Search</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700">Search</label>
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={handleSearchChange}
-                            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 placeholder-gray-500"
                             placeholder="Search products..."
                         />
                     </div>
 
                     {/* Category Filter */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">Category</label>
-                        <select value={selectedCategory} onChange={handleCategoryChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label className="block text-sm font-medium mb-2 text-gray-700">Category</label>
+                        <select
+                            value={selectedCategory}
+                            onChange={handleCategoryChange}
+                            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
+                        >
                             <option value="">All Categories</option>
                             {Array.isArray(categories) &&
                                 categories.map(category => (
@@ -134,22 +145,22 @@ export default function ProductsPage() {
 
                     {/* Price Range */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">Price Range</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700">Price Range</label>
                         <div className="flex items-center gap-2">
                             <input
                                 type="number"
                                 value={priceRange.min}
                                 onChange={e => handlePriceChange(e, 'min')}
-                                className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
                                 min="0"
                                 placeholder="Min"
                             />
-                            <span>-</span>
+                            <span className="text-gray-700">-</span>
                             <input
                                 type="number"
                                 value={priceRange.max}
                                 onChange={e => handlePriceChange(e, 'max')}
-                                className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
                                 min="0"
                                 placeholder="Max"
                             />
@@ -158,12 +169,17 @@ export default function ProductsPage() {
 
                     {/* Rating Filter */}
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">Minimum Rating: {minRating}</label>
-                        <input type="range" min="0" max="5" step="0.5" value={minRating} onChange={handleRatingChange} className="w-full" />
+                        <label className="block text-sm font-medium mb-2 text-gray-700">
+                            Minimum Rating: <span className="font-semibold text-blue-600">{minRating}</span>
+                        </label>
+                        <input type="range" min="0" max="5" step="0.5" value={minRating} onChange={handleRatingChange} className="w-full accent-blue-600" />
                     </div>
 
                     {/* Reset Filters */}
-                    <button onClick={resetFilters} className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded hover:bg-gray-300 transition duration-200">
+                    <button
+                        onClick={resetFilters}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 font-medium shadow-sm border border-blue-700"
+                    >
                         Reset Filters
                     </button>
                 </div>
@@ -171,9 +187,9 @@ export default function ProductsPage() {
                 {/* Products Grid */}
                 <div className="w-full md:w-3/4">
                     {products.length === 0 ? (
-                        <div className="text-center py-10 bg-gray-50 rounded-lg">
-                            <p className="text-gray-500">No products found matching your criteria.</p>
-                            <button onClick={resetFilters} className="mt-4 text-blue-600 hover:underline">
+                        <div className="text-center py-10 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                            <p className="text-gray-700 font-medium">No products found matching your criteria.</p>
+                            <button onClick={resetFilters} className="mt-4 text-blue-600 hover:text-blue-800 hover:underline font-medium">
                                 Clear filters
                             </button>
                         </div>
@@ -181,29 +197,32 @@ export default function ProductsPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {Array.isArray(products) &&
                                 products.map(product => (
-                                    <div key={product?.id || Math.random()} className="border rounded-lg overflow-hidden hover:shadow-lg transition duration-300">
+                                    <div key={product?.id || Math.random()} className="border rounded-lg overflow-hidden hover:shadow-lg transition duration-300 bg-white">
                                         <div className="h-48 bg-gray-200 relative">
                                             {product?.image ? (
                                                 <img src={product.image} alt={product?.name || 'Product'} className="h-full w-full object-cover" />
                                             ) : (
-                                                <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
+                                                <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
                                             )}
                                         </div>
                                         <div className="p-4">
-                                            <h3 className="font-semibold">{product?.name || 'Unnamed Product'}</h3>
-                                            <p className="text-gray-500 text-sm mb-2">{product?.categoryName || 'Uncategorized'}</p>
+                                            <h3 className="font-semibold text-gray-800">{product?.name || 'Unnamed Product'}</h3>
+                                            <p className="text-gray-600 text-sm mb-2">{product?.categoryName || 'Uncategorized'}</p>
                                             <div className="flex justify-between items-center">
-                                                <span className="font-bold">${parseFloat(product?.price || 0).toFixed(2)}</span>
+                                                <span className="font-bold text-blue-600">${parseFloat(product?.price || 0).toFixed(2)}</span>
                                                 <div className="flex items-center">
-                                                    <span className="text-yellow-400">★</span>
-                                                    <span className="ml-1">{product?.rating ? parseFloat(product.rating).toFixed(1) : '0.0'}</span>
+                                                    <span className="text-yellow-500">★</span>
+                                                    <span className="ml-1 text-gray-700">{product?.rating ? parseFloat(product.rating).toFixed(1) : '0.0'}</span>
                                                 </div>
                                             </div>
                                             <div className="mt-4 flex space-x-2">
-                                                <Link href={`/product/${product?.id || ''}`} className="bg-blue-600 text-white py-1 px-3 rounded text-sm flex-1 text-center">
+                                                <Link
+                                                    href={`/product/${product?.id || ''}`}
+                                                    className="bg-blue-600 text-white py-1 px-3 rounded text-sm flex-1 text-center hover:bg-blue-700 shadow-sm"
+                                                >
                                                     View Details
                                                 </Link>
-                                                <button className="bg-green-600 text-white py-1 px-3 rounded text-sm">Add to Cart</button>
+                                                <button className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm">Add to Cart</button>
                                             </div>
                                         </div>
                                     </div>

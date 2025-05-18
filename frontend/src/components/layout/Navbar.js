@@ -57,7 +57,7 @@ const Navbar = () => {
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                isScrolled ? 'bg-white text-gray-800 shadow-md' : 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white'
+                isScrolled ? 'bg-white text-gray-800 shadow-md' : 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white'
             }`}
         >
             <div className="container mx-auto px-4">
@@ -190,7 +190,7 @@ const Navbar = () => {
             {/* Mobile Menu */}
             <div
                 className={`md:hidden transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-96 py-4' : 'max-h-0'} ${
-                    isScrolled ? 'bg-white text-gray-800' : 'bg-blue-700 text-white'
+                    isScrolled ? 'bg-white text-gray-800' : 'bg-blue-800 text-white'
                 }`}
             >
                 <div className="container mx-auto px-4 space-y-3">
@@ -200,35 +200,35 @@ const Navbar = () => {
 
                     {isAuthenticated ? (
                         <>
-                            <div className="py-2 border-t border-gray-600 mt-2">
-                                <p className="text-sm mb-1 opacity-75">My Account</p>
-                                <Link href="/profile" className="flex items-center py-2 font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                            <div className="py-2 border-t border-blue-600 mt-2">
+                                <p className="text-sm mb-1 opacity-90 font-medium">My Account</p>
+                                <Link href="/profile" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
                                     <FaUser className="mr-2" size={14} />
                                     My Profile
                                 </Link>
-                                <Link href="/customer" className="flex items-center py-2 font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Link href="/customer" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
                                     <FaAddressCard className="mr-2" size={14} />
                                     Account Details
                                 </Link>
-                                <Link href="/orders" className="flex items-center py-2 font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Link href="/orders" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
                                     <FaBoxOpen className="mr-2" size={14} />
                                     My Orders
                                 </Link>
                             </div>
-                            <div className="border-t border-gray-600 pt-2">
-                                <button onClick={handleLogout} className="flex items-center w-full text-left py-2 font-medium text-red-300">
+                            <div className="border-t border-blue-600 pt-2">
+                                <button onClick={handleLogout} className="flex items-center w-full text-left py-2 font-medium text-red-300 hover:text-red-200">
                                     <FaSignOutAlt className="mr-2" size={14} />
                                     Logout
                                 </button>
                             </div>
                         </>
                     ) : (
-                        <div className="border-t border-gray-600 mt-2 pt-2 space-y-3">
-                            <Link href="/login" className="flex items-center py-2 font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className="border-t border-blue-600 mt-2 pt-2 space-y-3">
+                            <Link href="/login" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
                                 <FaSignInAlt className="mr-2" size={14} />
                                 Login
                             </Link>
-                            <Link href="/register" className="flex items-center py-2 font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/register" className="flex items-center py-2 font-medium hover:text-blue-300" onClick={() => setIsMobileMenuOpen(false)}>
                                 <FaUserPlus className="mr-2" size={14} />
                                 Register
                             </Link>

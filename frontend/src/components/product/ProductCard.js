@@ -42,10 +42,10 @@ const ProductCard = ({ product }) => {
                     </div>
                 </div>
                 <div className="mt-4 flex space-x-2">
-                    <Link href={`/product/${product?.id || ''}`} className="bg-blue-600 text-white py-1 px-3 rounded text-sm flex-1 text-center">
+                    <Link href={`/product/${product?.id || ''}`} className="bg-blue-600 text-white py-1 px-3 rounded text-sm flex-1 text-center hover:bg-blue-700 shadow-sm">
                         View Details
                     </Link>
-                    <button onClick={handleAddToCart} className="bg-green-600 text-white py-1 px-3 rounded text-sm">
+                    <button onClick={handleAddToCart} className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm">
                         Add to Cart
                     </button>
                 </div>

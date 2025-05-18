@@ -43,11 +43,11 @@ export default function Home() {
         <div className="space-y-12">
             {/* Hero Section */}
             <section className="relative bg-gray-900 text-white rounded-lg overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-90"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-90"></div>
                 <div className="relative container mx-auto px-6 py-16 flex flex-col items-center text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to Mini E-Commerce</h1>
-                    <p className="text-xl mb-8 max-w-2xl">Discover amazing products at unbeatable prices. Shop now and experience the difference!</p>
-                    <Link href="/products" className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition duration-300">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-md">Welcome to Mini E-Commerce</h1>
+                    <p className="text-xl mb-8 max-w-2xl text-white drop-shadow-sm">Discover amazing products at unbeatable prices. Shop now and experience the difference!</p>
+                    <Link href="/products" className="bg-white text-blue-700 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition duration-300 shadow-md">
                         Browse Products
                     </Link>
                 </div>
@@ -68,8 +68,8 @@ export default function Home() {
                               ))
                         : categories.map(category => (
                               <Link key={category.id} href={`/products?categoryId=${category.id}`}>
-                                  <div className="bg-gray-100 p-6 rounded-lg text-center hover:shadow-lg transition duration-300">
-                                      <h3 className="font-semibold">{category.name}</h3>
+                                  <div className="bg-gray-100 p-6 rounded-lg text-center hover:shadow-lg transition duration-300 border border-gray-200">
+                                      <h3 className="font-semibold text-gray-800">{category.name}</h3>
                                       {category.description && <p className="text-sm text-gray-600 mt-2">{category.description}</p>}
                                   </div>
                               </Link>
@@ -108,23 +108,23 @@ export default function Home() {
             </section>
 
             {/* Benefits Section */}
-            <section className="py-8 bg-gray-50 -mx-4 px-4 rounded-lg">
-                <h2 className="text-2xl font-bold mb-6 text-center">Why Shop With Us</h2>
+            <section className="py-8 bg-gray-50 -mx-4 px-4 rounded-lg border border-gray-200">
+                <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Why Shop With Us</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="text-center p-4">
                         <div className="text-blue-600 text-4xl mb-3">🚚</div>
-                        <h3 className="font-semibold mb-2">Free Shipping</h3>
-                        <p className="text-gray-600">On all orders over $50</p>
+                        <h3 className="font-semibold mb-2 text-gray-800">Free Shipping</h3>
+                        <p className="text-gray-700">On all orders over $50</p>
                     </div>
                     <div className="text-center p-4">
                         <div className="text-blue-600 text-4xl mb-3">🔒</div>
-                        <h3 className="font-semibold mb-2">Secure Payment</h3>
-                        <p className="text-gray-600">100% secure payment</p>
+                        <h3 className="font-semibold mb-2 text-gray-800">Secure Payment</h3>
+                        <p className="text-gray-700">100% secure payment</p>
                     </div>
                     <div className="text-center p-4">
                         <div className="text-blue-600 text-4xl mb-3">♻️</div>
-                        <h3 className="font-semibold mb-2">Easy Returns</h3>
-                        <p className="text-gray-600">30 day return policy</p>
+                        <h3 className="font-semibold mb-2 text-gray-800">Easy Returns</h3>
+                        <p className="text-gray-700">30 day return policy</p>
                     </div>
                 </div>
             </section>

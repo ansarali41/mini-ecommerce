@@ -39,42 +39,34 @@ export default function Profile() {
                         {user?.username?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold">{user?.username || 'User'}</h2>
+                        <h2 className="text-2xl font-bold text-gray-800">{user?.username || 'User'}</h2>
                         <p className="text-gray-600">{user?.email || 'email@example.com'}</p>
                         <p className="text-sm text-gray-500">Member since {new Date(user?.createdAt || Date.now()).toLocaleDateString()}</p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                     <div>
-                        <h3 className="text-lg font-semibold mb-3">Account Details</h3>
+                        <h3 className="text-lg font-semibold mb-3 text-gray-800">Account Details</h3>
                         <div className="space-y-2">
                             <div className="flex justify-between border-b pb-2">
                                 <span className="text-gray-600">Username:</span>
-                                <span className="font-medium">{user?.username}</span>
+                                <span className="font-medium text-gray-600">{user?.username}</span>
                             </div>
                             <div className="flex justify-between border-b pb-2">
                                 <span className="text-gray-600">Email:</span>
-                                <span className="font-medium">{user?.email}</span>
+                                <span className="font-medium text-gray-600">{user?.email}</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 className="text-lg font-semibold mb-3">Actions</h3>
-                        <div className="space-y-3">
-                            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">Edit Profile</button>
-                            <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded">Change Password</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="bg-white shadow-md rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-4">Order History</h3>
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Order History</h3>
 
                 <div className="text-center py-6 text-gray-500">
-                    <p>You haven't placed any orders yet.</p>
+                    <p>You haven&apos;t placed any orders yet.</p>
                     <button onClick={() => router.push('/products')} className="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
                         Browse Products
                     </button>
