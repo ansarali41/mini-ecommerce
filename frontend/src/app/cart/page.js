@@ -65,12 +65,12 @@ export default function CartPage() {
                             <div>Subtotal</div>
                         </div>
 
-                        {cart.map(item => (
+                        {cart?.map(item => (
                             <div key={item.id} className="border-t first:border-t-0 p-4">
                                 <div className="md:grid md:grid-cols-5 gap-4 items-center">
                                     {/* Product */}
-                                    <div className="md:col-span-2 flex items-center mb-4 md:mb-0">
-                                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0 mr-4">
+                                    <div className="md:col-span-2 flex items-center mb-4 md:mb-0 text-gray-600">
+                                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0 mr-4 text-gray-600">
                                             {item.image ? (
                                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                             ) : (
@@ -86,12 +86,12 @@ export default function CartPage() {
                                     </div>
 
                                     {/* Price */}
-                                    <div className="mb-4 md:mb-0">
-                                        <div className="md:hidden text-sm text-gray-600 mb-1">Price:</div>${parseFloat(item.price || 0).toFixed(2)}
+                                    <div className="mb-4 md:mb-0 text-gray-600">
+                                        <div className="md:hidden text-sm text-gray-600 mb-1 ">Price:</div>${parseFloat(item.price || 0).toFixed(2)}
                                     </div>
 
                                     {/* Quantity */}
-                                    <div className="mb-4 md:mb-0">
+                                    <div className="mb-4 md:mb-0 text-gray-600">
                                         <div className="md:hidden text-sm text-gray-600 mb-1">Quantity:</div>
                                         <input
                                             type="number"
@@ -103,7 +103,7 @@ export default function CartPage() {
                                     </div>
 
                                     {/* Subtotal */}
-                                    <div>
+                                    <div className="text-gray-600">
                                         <div className="md:hidden text-sm text-gray-600 mb-1">Subtotal:</div>
                                         <span className="font-semibold">${parseFloat(item.price || 0) * parseInt(item.quantity || 1).toFixed(2)}</span>
                                     </div>
@@ -127,24 +127,24 @@ export default function CartPage() {
                 {/* Order Summary */}
                 <div className="lg:w-1/3">
                     <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-600">Order Summary</h2>
 
                         <div className="border-b pb-4 mb-4">
-                            <div className="flex justify-between mb-2">
+                            <div className="flex justify-between mb-2 text-gray-600">
                                 <span className="text-gray-600">Subtotal</span>
                                 <span>${parseFloat(totalPrice || 0).toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between mb-2">
+                            <div className="flex justify-between mb-2 text-gray-600">
                                 <span className="text-gray-600">Shipping</span>
                                 <span>Free</span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="flex justify-between text-gray-600">
                                 <span className="text-gray-600">Tax</span>
                                 <span>${(parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
                             </div>
                         </div>
 
-                        <div className="flex justify-between mb-6">
+                        <div className="flex justify-between mb-6 text-gray-600">
                             <span className="font-bold">Total</span>
                             <span className="font-bold text-lg">${(parseFloat(totalPrice || 0) + parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
                         </div>
