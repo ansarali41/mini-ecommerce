@@ -1,8 +1,11 @@
 import axios from 'axios';
 
+// Determine the backend API URL based on environment
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
 // Create axios instance with base URL
 const api = axios.create({
-    baseURL: 'http://localhost:4000/api',
+    baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     },

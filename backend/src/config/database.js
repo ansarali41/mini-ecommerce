@@ -19,6 +19,16 @@ const sequelize = new Sequelize(process.env.DB_NAME || 'mini_ecommerce', process
         acquire: 30000,
         idle: 10000,
     },
+    // SSL configuration for production database connections
+    ...(process.env.NODE_ENV === 'production' && {
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false,
+            },
+            // Additional Railway-specific options if needed
+        },
+    }),
 });
 
 // Test database connection
