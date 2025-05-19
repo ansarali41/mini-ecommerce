@@ -6,6 +6,6 @@
     "framework": "nextjs",
     "routes": [{ "src": "/(.*)", "dest": "/", "continue": true }],
     "env": {
-        "NEXT_PUBLIC_API_URL": "https://mini-e-commerce-api.onrender.com/api"
+        "NEXT_PUBLIC_API_URL": "https://mini-ecommerce-18ps.onrender.com/api"
     }
 }
