@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
                     <Link href={`/product/${product?.id || ''}`} className="bg-blue-600 text-white py-1 px-3 rounded text-sm flex-1 text-center hover:bg-blue-700 shadow-sm">
                         View Details
                     </Link>
-                    <button onClick={handleAddToCart} className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm">
+                    <button onClick={handleAddToCart} className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm cursor-pointer">
                         Add to Cart
                     </button>
                 </div>

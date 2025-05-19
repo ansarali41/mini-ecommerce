@@ -136,7 +136,10 @@ export default function ProductPage({ params }) {
                                 />
                             </div>
 
-                            <button onClick={handleAddToCart} className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200 flex-grow">
+                            <button
+                                onClick={handleAddToCart}
+                                className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200 flex-grow cursor-pointer"
+                            >
                                 Add to Cart
                             </button>
                         </div>

@@ -255,7 +255,7 @@ export default function ProductsPage() {
                                                 </Link>
                                                 <button
                                                     onClick={() => handleAddToCart(product)}
-                                                    className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm"
+                                                    className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm cursor-pointer"
                                                 >
                                                     Add to Cart
                                                 </button>
