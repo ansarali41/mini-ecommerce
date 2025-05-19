@@ -16,7 +16,7 @@ export default function Home() {
 
                 // Fetch featured products (highest rated)
                 const productsResponse = await productsApi.getFeatured(4);
-                console.log('productsResponse', productsResponse.data);
+                console.log('productsResponse::', productsResponse.data);
 
                 // Set products from the response data
                 const processedResponse = productsApi.processResponse(productsResponse);
