@@ -14,3 +14,16 @@
   from = "/*"
   to = "/.netlify/functions/nextjs-server"
   status = 200
+  force = true
+
+# Fallback for static assets
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/_next/static/:splat"
+  status = 200
+
+# Special rule for public assets
+[[redirects]]
+  from = "/public/*"
+  to = "/public/:splat"
+  status = 200

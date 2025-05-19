@@ -10,8 +10,10 @@ const nextConfig = {
     },
     // Improve output for deployments
     output: 'standalone',
-    // Enable full static site generation if needed
-    // trailingSlash: true,
+    // Enable trailing slashes for better compatibility with Netlify
+    trailingSlash: true,
+    // Ensure output directory is properly handled
+    distDir: '.next',
 };
 
 export default nextConfig;
