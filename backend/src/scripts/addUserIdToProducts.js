@@ -39,7 +39,7 @@ async function addUserIdToProducts() {
         console.log('Migration completed successfully!');
         process.exit(0);
     } catch (error) {
-        console.error('Migration failed:', error);
+        console.log('Migration failed:', error);
         process.exit(1);
     }
 }

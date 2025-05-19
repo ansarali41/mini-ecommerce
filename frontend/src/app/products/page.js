@@ -61,7 +61,7 @@ export default function ProductsPage() {
                 const categoriesResponse = await categoriesApi.getAll();
                 setCategories(categoriesApi.processResponse(categoriesResponse));
             } catch (err) {
-                console.error('Error fetching categories:', err);
+                console.log('Error fetching categories:', err);
             }
         };
 
@@ -120,7 +120,7 @@ export default function ProductsPage() {
     const handleAddToCart = product => {
         // Check if product data is valid
         if (!product || !product.id) {
-            console.error('Invalid product data:', product);
+            console.log('Invalid product data:', product);
             return;
         }
 
@@ -136,7 +136,7 @@ export default function ProductsPage() {
 
             console.log(`Product added to cart: ${product.name}`);
         } catch (err) {
-            console.error('Error adding to cart:', err);
+            console.log('Error adding to cart:', err);
         }
     };
 

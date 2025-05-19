@@ -56,7 +56,7 @@ const register = async (req, res) => {
             token,
         });
     } catch (error) {
-        console.error('Registration error:', error);
+        console.log('Registration error:', error);
         res.status(500).json({
             statusCode: 500,
             message: 'Server error during registration',
@@ -110,7 +110,7 @@ const login = async (req, res) => {
             token,
         });
     } catch (error) {
-        console.error('Login error:', error);
+        console.log('Login error:', error);
         res.status(500).json({
             statusCode: 500,
             message: 'Server error during login',
@@ -139,7 +139,7 @@ const getMe = async (req, res) => {
             user,
         });
     } catch (error) {
-        console.error('Get user error:', error);
+        console.log('Get user error:', error);
         res.status(500).json({
             statusCode: 500,
             message: 'Server error retrieving user data',

@@ -32,7 +32,7 @@ export default function CartPage() {
             // Redirect to checkout - using Next.js router for proper navigation
             router.push('/checkout');
         } catch (error) {
-            console.error('Error navigating to checkout', error);
+            console.log('Error navigating to checkout', error);
         } finally {
             // Reset submitting state after a short delay
             setTimeout(() => {

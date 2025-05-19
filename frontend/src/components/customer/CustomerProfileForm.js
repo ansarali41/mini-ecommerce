@@ -38,7 +38,7 @@ const CustomerProfileForm = ({ customer, onSuccess }) => {
                 onSuccess();
             }
         } catch (err) {
-            console.error('Error saving customer profile:', err);
+            console.log('Error saving customer profile:', err);
             setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
         } finally {
             setLoading(false);

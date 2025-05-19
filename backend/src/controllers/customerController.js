@@ -10,7 +10,7 @@ const getCustomerProfile = async (req, res) => {
 
         // Add troubleshooting logs
         if (!userId) {
-            console.error('User ID is undefined or null');
+            console.log('User ID is undefined or null');
             return res.status(400).json({
                 success: false,
                 message: 'User ID is required',
@@ -19,7 +19,7 @@ const getCustomerProfile = async (req, res) => {
 
         // Check Customer model
         if (!Customer) {
-            console.error('Customer model is not defined properly');
+            console.log('Customer model is not defined properly');
             return res.status(500).json({
                 success: false,
                 message: 'Internal server error: Model not defined',
@@ -46,7 +46,7 @@ const getCustomerProfile = async (req, res) => {
                 customer,
             });
         } catch (queryError) {
-            console.error('Database query error:', queryError);
+            console.log('Database query error:', queryError);
             return res.status(500).json({
                 success: false,
                 message: 'Database query failed',
@@ -55,7 +55,7 @@ const getCustomerProfile = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Error getting customer profile:', error);
+        console.log('Error getting customer profile:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to get customer profile',

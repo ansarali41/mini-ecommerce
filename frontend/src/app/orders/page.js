@@ -53,16 +53,16 @@ export default function OrdersPage() {
                 console.log('Processed orders:', fetchedOrders);
                 setOrders(fetchedOrders);
             } catch (err) {
-                console.error('Error fetching orders:', err);
+                console.log('Error fetching orders:', err);
                 if (err.response) {
-                    console.error('Error response:', err.response);
+                    console.log('Error response:', err.response);
                     if (err.response.status === 401) {
                         setError('You need to be logged in to view your orders.');
                     } else {
                         setError(`Failed to load your orders. Server returned: ${err.response.status} ${err.response.statusText}`);
                     }
                 } else if (err.request) {
-                    console.error('Error request:', err.request);
+                    console.log('Error request:', err.request);
                     setError('Failed to connect to the server. Please check your internet connection.');
                 } else {
                     setError('Failed to load your orders. Please try again later.');

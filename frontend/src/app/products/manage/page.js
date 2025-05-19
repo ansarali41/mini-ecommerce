@@ -47,7 +47,7 @@ export default function ManageProductsPage() {
 
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching data:', err);
+                console.log('Error fetching data:', err);
                 setError('Failed to load data. Please try again.');
                 setLoading(false);
             }
@@ -92,7 +92,7 @@ export default function ManageProductsPage() {
             setEditingProduct(null);
             setLoading(false);
         } catch (err) {
-            console.error('Error saving product:', err);
+            console.log('Error saving product:', err);
             setError(err.response?.data?.message || 'Failed to save product. Please try again.');
             setLoading(false);
         }
@@ -109,7 +109,7 @@ export default function ManageProductsPage() {
             setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
             setLoading(false);
         } catch (err) {
-            console.error('Error deleting product:', err);
+            console.log('Error deleting product:', err);
             setError(err.response?.data?.message || 'Failed to delete product. Please try again.');
             setLoading(false);
         }

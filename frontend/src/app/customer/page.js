@@ -41,14 +41,14 @@ export default function CustomerPage() {
                     const processedOrders = ordersApi.processResponse(ordersResponse);
                     setOrders(Array.isArray(processedOrders) ? processedOrders : []);
                 } catch (orderErr) {
-                    console.error('Error fetching orders:', orderErr);
+                    console.log('Error fetching orders:', orderErr);
                     // Continue with customer profile even if orders fail to load
                     setOrders([]);
                 }
 
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching customer data:', err);
+                console.log('Error fetching customer data:', err);
 
                 if (err.response && err.response.status === 404) {
                     setError('Customer profile not found. Please create your profile below.');
@@ -84,7 +84,7 @@ export default function CustomerPage() {
                 }, 3000);
             })
             .catch(err => {
-                console.error('Error fetching updated profile:', err);
+                console.log('Error fetching updated profile:', err);
                 setError('Failed to refresh your profile. Please reload the page.');
             });
     };
@@ -137,13 +137,13 @@ export default function CustomerPage() {
                                             const processedOrders = ordersApi.processResponse(ordersResponse);
                                             setOrders(Array.isArray(processedOrders) ? processedOrders : []);
                                         } catch (e) {
-                                            console.error('Error processing orders:', e);
+                                            console.log('Error processing orders:', e);
                                             setOrders([]);
                                         }
                                         setLoading(false);
                                     })
                                     .catch(err => {
-                                        console.error('Error retrying customer data fetch:', err);
+                                        console.log('Error retrying customer data fetch:', err);
 
                                         if (err.response && err.response.status === 401) {
                                             setError('Your session has expired. Please log in again.');
@@ -176,7 +176,7 @@ export default function CustomerPage() {
                                             setLoading(false);
                                         })
                                         .catch(err => {
-                                            console.error('Error fetching updated profile:', err);
+                                            console.log('Error fetching updated profile:', err);
                                             setError('Failed to load your new profile. Please refresh the page.');
                                             setLoading(false);
                                         });

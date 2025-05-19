@@ -16,7 +16,7 @@ async function login() {
 
         return response.data.token;
     } catch (error) {
-        console.error('Login failed:', error.response?.data || error.message);
+        console.log('Login failed:', error.response?.data || error.message);
         return null;
     }
 }
@@ -34,7 +34,7 @@ async function getCustomerProfile(token) {
         console.log(JSON.stringify(response.data, null, 2));
         return response.data;
     } catch (error) {
-        console.error('Failed to get customer profile:', error.response?.data || error.message);
+        console.log('Failed to get customer profile:', error.response?.data || error.message);
         return null;
     }
 }
@@ -44,7 +44,7 @@ async function main() {
     const token = await login();
 
     if (!token) {
-        console.error('Test failed: Could not obtain authentication token');
+        console.log('Test failed: Could not obtain authentication token');
         return;
     }
 
@@ -53,7 +53,7 @@ async function main() {
     const customerProfile = await getCustomerProfile(token);
 
     if (!customerProfile) {
-        console.error('Test failed: Could not retrieve customer profile');
+        console.log('Test failed: Could not retrieve customer profile');
         return;
     }
 
@@ -62,5 +62,5 @@ async function main() {
 
 // Run the test
 main().catch(error => {
-    console.error('Uncaught error:', error);
+    console.log('Uncaught error:', error);
 });

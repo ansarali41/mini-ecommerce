@@ -108,7 +108,7 @@ export const ordersApi = {
             const response = await api.get('/orders');
             return response;
         } catch (error) {
-            console.error('Error in ordersApi.getAll:', error);
+            console.log('Error in ordersApi.getAll:', error);
             throw error;
         }
     },
@@ -136,7 +136,6 @@ export const customersApi = {
         // Additional validation to ensure we have a valid customer object
         if (!customerData || typeof customerData !== 'object') return null;
 
-        console.log('Processed customer data:', customerData);
         return customerData;
     },
 };

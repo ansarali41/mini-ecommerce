@@ -39,7 +39,7 @@ const testCustomerApi = async () => {
             if (error.response && error.response.status === 404) {
                 console.log('No customer profile found (404), which is expected if not created yet');
             } else {
-                console.error('Error fetching profile:', error.response?.data || error.message);
+                console.log('Error fetching profile:', error.response?.data || error.message);
             }
         }
 
@@ -78,7 +78,7 @@ const testCustomerApi = async () => {
 
         console.log('\n=== Customer Profile API Test Completed Successfully ===');
     } catch (error) {
-        console.error('Test failed:', error.response?.data || error.message);
+        console.log('Test failed:', error.response?.data || error.message);
     }
 };
 

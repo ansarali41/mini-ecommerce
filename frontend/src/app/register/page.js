@@ -59,7 +59,7 @@ export default function Register() {
                 router.push('/');
             }, 100);
         } catch (error) {
-            console.error('Registration error:', error);
+            console.log('Registration error:', error);
 
             // Provide more specific error messages based on status code or response
             if (error.response && error.response.status === 400) {

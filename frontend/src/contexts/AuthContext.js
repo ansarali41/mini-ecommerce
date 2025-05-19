@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
                 setUser(JSON.parse(storedUser));
                 return true;
             } catch (error) {
-                console.error('Error refreshing user:', error);
+                console.log('Error refreshing user:', error);
                 setError('Authentication error. Please log in again.');
                 logout();
                 return false;
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
                         }
                     } catch (error) {
                         // Token is invalid, clear auth data
-                        console.error('Token validation failed:', error);
+                        console.log('Token validation failed:', error);
                         logout();
                     }
                 }
@@ -108,7 +108,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             // Only log unexpected errors
             if (!error.response || ![400, 409].includes(error.response.status)) {
-                console.error('Registration error:', error);
+                console.log('Registration error:', error);
             }
 
             setError(error.response?.data?.message || 'Registration failed. Please try again.');
@@ -147,7 +147,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             // Don't log 401 unauthorized errors as they're expected for invalid credentials
             if (!error.response || error.response.status !== 401) {
-                console.error('Login error:', error);
+                console.log('Login error:', error);
             }
 
             setError(error.response?.data?.message || 'Login failed. Please check your credentials.');

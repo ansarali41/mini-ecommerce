@@ -32,7 +32,7 @@ export default function ProductPage({ params }) {
 
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching product:', err);
+                console.log('Error fetching product:', err);
                 setError('Failed to fetch product. Please try again later.');
                 setLoading(false);
             }

@@ -50,7 +50,7 @@ async function verifyPasswordHashing() {
 
         process.exit(0);
     } catch (error) {
-        console.error('Error verifying password hashing:', error);
+        console.log('Error verifying password hashing:', error);
         process.exit(1);
     }
 }

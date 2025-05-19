@@ -75,7 +75,7 @@ export default function CheckoutPage() {
                     // Don't display error to user, just continue with default form data
                     // A 404 is expected if the customer hasn't created a profile yet
                     if (error.response && error.response.status !== 404) {
-                        console.error('Unexpected error fetching customer profile:', error);
+                        console.log('Unexpected error fetching customer profile:', error);
                     }
                 }
             };
@@ -201,13 +201,13 @@ export default function CheckoutPage() {
 
             console.log('Order process completed successfully!');
         } catch (error) {
-            console.error('Error placing order:', error);
+            console.log('Error placing order:', error);
 
             // More detailed error handling
             let errorMessage = 'There was an error placing your order. Please try again.';
 
             if (error.response) {
-                console.error('Error response:', error.response.data);
+                console.log('Error response:', error.response.data);
                 errorMessage = error.response.data.message || errorMessage;
 
                 // Handle specific error cases
