@@ -4,10 +4,14 @@ const nextConfig = {
         return [
             {
                 source: '/api/:path*',
-                destination: 'http://localhost:5000/api/:path*',
+                destination: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/:path*',
             },
         ];
     },
+    // Improve output for deployments
+    output: 'standalone',
+    // Enable full static site generation if needed
+    // trailingSlash: true,
 };
 
 export default nextConfig;
