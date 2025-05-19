@@ -19,7 +19,8 @@ export default function Home() {
                 console.log('productsResponse', productsResponse.data);
 
                 // Set products from the response data
-                setFeaturedProducts(productsApi.processResponse(productsResponse));
+                const processedResponse = productsApi.processResponse(productsResponse);
+                setFeaturedProducts(processedResponse.products);
 
                 // Fetch categories
                 const categoriesResponse = await categoriesApi.getAll();

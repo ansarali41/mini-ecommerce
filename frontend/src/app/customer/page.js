@@ -193,7 +193,7 @@ export default function CustomerPage() {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow">
-                    <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Login to Your Account</h1>
+                    <h1 className="text-2xl font-bold mb-6 text-center text-white">Login to Your Account</h1>
                     <p className="text-center mb-6 text-gray-700">Please login to view your account details</p>
                     <Link href="/login" className="block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
                         Go to Login

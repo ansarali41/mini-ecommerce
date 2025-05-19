@@ -134,7 +134,7 @@ export default function OrdersPage() {
     if (orders.length === 0) {
         return (
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-8 text-gray-800">My Orders</h1>
+                <h1 className="text-3xl font-bold mb-8 text-white">My Orders</h1>
                 <div className="bg-white rounded-lg shadow-lg p-8 text-center">
                     <div className="text-gray-400 text-5xl mb-4">
                         <FaBoxOpen className="mx-auto" />

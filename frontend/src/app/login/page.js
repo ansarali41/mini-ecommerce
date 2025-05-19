@@ -62,7 +62,7 @@ export default function Login() {
 
     return (
         <div className="max-w-md mx-auto my-12 p-6 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold text-center mb-6">Login to Your Account</h1>
+            <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Login to Your Account</h1>
 
             {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 
@@ -111,7 +111,7 @@ export default function Login() {
             </form>
 
             <div className="text-center mt-6">
-                <p className="text-sm">
+                <p className="text-sm text-gray-800">
                     Don&apos;t have an account?{' '}
                     <Link href="/register" className="text-blue-600 hover:underline">
                         Register

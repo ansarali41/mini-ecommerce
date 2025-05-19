@@ -79,10 +79,28 @@ export const productsApi = {
                 sortOrder: 'DESC',
             },
         }),
-    // Helper method to extract products from the response
+    // Helper method to extract products and pagination data from the response
     processResponse: response => {
-        if (!response || !response.data) return [];
-        return Array.isArray(response.data) ? response.data : response.data.products && Array.isArray(response.data.products) ? response.data.products : [];
+        if (!response || !response.data) return { products: [], totalPages: 0, currentPage: 1, totalItems: 0 };
+
+        // Check if response is already paginated
+        if (response.data.products && Array.isArray(response.data.products)) {
+            return {
+                products: response.data.products,
+                totalPages: response.data.totalPages || 1,
+                currentPage: response.data.currentPage || 1,
+                totalItems: response.data.totalItems || response.data.products.length,
+            };
+        }
+
+        // Handle case where response is just an array of products
+        const products = Array.isArray(response.data) ? response.data : [];
+        return {
+            products,
+            totalPages: 1,
+            currentPage: 1,
+            totalItems: products.length,
+        };
     },
 };
 

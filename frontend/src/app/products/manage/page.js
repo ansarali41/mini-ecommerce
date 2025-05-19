@@ -37,7 +37,7 @@ export default function ManageProductsPage() {
 
                 // Fetch user's products
                 const productsResponse = await productsApi.getAll({ userId: user.id });
-                const productsList = productsApi.processResponse(productsResponse);
+                const { products: productsList } = productsApi.processResponse(productsResponse);
                 setProducts(Array.isArray(productsList) ? productsList : []);
 
                 // Fetch categories for product form
