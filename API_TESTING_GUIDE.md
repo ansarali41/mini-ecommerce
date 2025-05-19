@@ -63,10 +63,43 @@ Similar to Products, you can:
 
     - Requires authentication
     - The sample request body includes customer details and order items
+    - This will automatically update product stock levels
 
 2. **View Orders**
+
     - Requires authentication
     - You can view all orders or a specific order by ID
+
+3. **Testing Stock Updates**
+    - Create an order for a product with a specific quantity
+    - Verify the product's stock has decreased by checking with "Get Product by ID"
+    - Try creating an order for more units than available stock (should return an error)
+    - Cancel an order (if implemented) and verify stock updates
+
+### Stock Management Testing
+
+1. **Verify Initial Stock**
+
+    - Use "Get Product by ID" to check the current stock level of a product
+
+2. **Create an Order**
+
+    - Create an order including this product
+    - The stock level should automatically decrease
+
+3. **Verify Stock Update**
+
+    - Get the product again to verify the stock level has decreased
+
+4. **Test Stock Validation**
+
+    - Try to create an order for more units than available
+    - The API should return a 400 error with a message about insufficient stock
+
+5. **Edge Cases**
+    - Test with exactly the remaining stock amount (should succeed)
+    - Test with zero quantity (should fail validation)
+    - Test with negative quantity (should fail validation)
 
 ### Customers
 
@@ -81,7 +114,15 @@ The collection includes a test script that automatically extracts the authentica
 -   **401 Unauthorized**: Make sure you've logged in and the token is valid
 -   **403 Forbidden**: The authenticated user doesn't have permission for this action
 -   **404 Not Found**: The requested resource doesn't exist
+-   **400 Bad Request**: Check request data - common with stock validation errors
 -   **500 Server Error**: Check the backend server logs for details
+
+## Stock-Related Error Messages
+
+When testing stock-related functionality, look for these specific error messages:
+
+-   `Insufficient stock for product`: Occurs when trying to order more units than available
+-   `Stock cannot be negative`: Model validation error when attempting to set negative stock
 
 ## Modifying Requests
 
