@@ -33,7 +33,7 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="p-4">
                 <h3 className="font-semibold">{product?.name || 'Unnamed Product'}</h3>
-                <p className="text-gray-500 text-sm mb-2">{product?.categoryName || 'Uncategorized'}</p>
+                <p className="text-gray-500 text-sm mb-2">{product?.category?.name || 'Uncategorized'}</p>
                 <div className="flex justify-between items-center">
                     <span className="font-bold">${parseFloat(product?.price || 0).toFixed(2)}</span>
                     <div className="flex items-center">

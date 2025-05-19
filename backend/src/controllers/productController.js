@@ -144,7 +144,7 @@ const createProduct = async (req, res) => {
             name,
             description,
             price,
-            stock,
+            countInStock: stock, // Map stock to countInStock
             image,
             categoryId,
             rating: rating || 0,
@@ -206,7 +206,7 @@ const updateProduct = async (req, res) => {
             name: name || product.name,
             description: description || product.description,
             price: price || product.price,
-            stock: stock !== undefined ? stock : product.stock,
+            countInStock: stock !== undefined ? stock : product.countInStock,
             image: image || product.image,
             categoryId: categoryId || product.categoryId,
             rating: rating !== undefined ? rating : product.rating,

@@ -136,6 +136,7 @@ export const customersApi = {
         // Additional validation to ensure we have a valid customer object
         if (!customerData || typeof customerData !== 'object') return null;
 
+        console.log('Processed customer data:', customerData);
         return customerData;
     },
 };

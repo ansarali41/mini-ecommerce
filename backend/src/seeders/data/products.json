@@ -5,7 +5,7 @@
         "price": 999.99,
         "category": "Electronics",
         "countInStock": 15,
-        "image": "iphone13pro.jpg",
+        "image": "https://images.unsplash.com/photo-1632661674596-df8be070a5c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         "brand": "Apple",
         "rating": 4.8,
         "numReviews": 12
@@ -16,7 +16,7 @@
         "price": 799.99,
         "category": "Electronics",
         "countInStock": 10,
-        "image": "galaxys21.jpg",
+        "image": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         "brand": "Samsung",
         "rating": 4.5,
         "numReviews": 8
@@ -27,7 +27,7 @@
         "price": 150.0,
         "category": "Fashion",
         "countInStock": 25,
-        "image": "nikeairmax.jpg",
+        "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         "brand": "Nike",
         "rating": 4.7,
         "numReviews": 15
@@ -38,7 +38,7 @@
         "price": 129.99,
         "category": "Electronics",
         "countInStock": 20,
-        "image": "kindle.jpg",
+        "image": "https://images.unsplash.com/photo-1592899435207-a41b881740b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         "brand": "Amazon",
         "rating": 4.6,
         "numReviews": 30
@@ -49,9 +49,53 @@
         "price": 59.99,
         "category": "Fashion",
         "countInStock": 35,
-        "image": "levis501.jpg",
+        "image": "https://images.unsplash.com/photo-1582552938357-32b906df40cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         "brand": "Levi's",
         "rating": 4.4,
         "numReviews": 25
+    },
+    {
+        "name": "Sony WH-1000XM4 Headphones",
+        "description": "Premium noise-cancelling wireless headphones with exceptional sound quality",
+        "price": 349.99,
+        "category": "Electronics",
+        "countInStock": 18,
+        "image": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        "brand": "Sony",
+        "rating": 4.9,
+        "numReviews": 42
+    },
+    {
+        "name": "Adidas Ultraboost 22",
+        "description": "Responsive running shoes with Boost cushioning for maximum energy return",
+        "price": 180.0,
+        "category": "Fashion",
+        "countInStock": 22,
+        "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        "brand": "Adidas",
+        "rating": 4.7,
+        "numReviews": 32
+    },
+    {
+        "name": "Apple MacBook Pro 16-inch",
+        "description": "Powerful laptop with Apple M1 Pro chip, Liquid Retina XDR display, and impressive battery life",
+        "price": 2499.99,
+        "category": "Electronics",
+        "countInStock": 8,
+        "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        "brand": "Apple",
+        "rating": 4.8,
+        "numReviews": 28
+    },
+    {
+        "name": "Instant Pot Duo Plus",
+        "description": "9-in-1 electric pressure cooker with advanced safety features",
+        "price": 119.99,
+        "category": "Home",
+        "countInStock": 30,
+        "image": "https://images.unsplash.com/photo-1588613254750-c6b9f78b0e34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        "brand": "Instant Pot",
+        "rating": 4.6,
+        "numReviews": 56
     }
 ]

@@ -32,22 +32,30 @@ const importData = async () => {
         const createdCategories = await Category.bulkCreate(categories);
         console.log('Categories imported');
 
-        // Create users first
-        const createdUsers = await User.bulkCreate(users);
+        // Create users first - include hooks to ensure passwords are hashed
+        const createdUsers = await User.bulkCreate(users, { individualHooks: true });
         console.log('Users imported');
+
+        // Get only non-admin users for product assignment
+        const regularUsers = createdUsers.filter(user => user.role !== 'admin');
 
         // Map user IDs to customers if they reference existing users
         // No need to transform customer data since it now matches the model
         await Customer.bulkCreate(customers);
-        console.log('Customers imported');
-
-        // Map category IDs for products if needed
-        const productsWithMappedCategories = products.map(product => {
+        console.log('Customers imported'); // Map category IDs for products if needed
+        const productsWithMappedCategories = products.map((product, index) => {
             // Find the category by name
             const category = createdCategories.find(c => c.name === product.category);
+
+            // Assign products to regular users in a round-robin fashion
+            const userId = regularUsers[index % regularUsers.length].id;
+
+            console.log(`Assigning product "${product.name}" to user ID: ${userId}`);
+
             return {
                 ...product,
                 categoryId: category ? category.id : null,
+                userId: userId, // Associate each product with a user
             };
         });
 

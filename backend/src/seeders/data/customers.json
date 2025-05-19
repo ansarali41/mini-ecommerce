@@ -31,5 +31,38 @@
         "zipCode": "60007",
         "country": "USA",
         "phone": "312-555-4321"
+    },
+    {
+        "userId": 4,
+        "firstName": "Alice",
+        "lastName": "Johnson",
+        "address": "101 Maple Street",
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02108",
+        "country": "USA",
+        "phone": "617-555-8765"
+    },
+    {
+        "userId": 5,
+        "firstName": "Bob",
+        "lastName": "Brown",
+        "address": "202 Cedar Avenue",
+        "city": "Seattle",
+        "state": "WA",
+        "zipCode": "98101",
+        "country": "USA",
+        "phone": "206-555-9876"
+    },
+    {
+        "userId": 6,
+        "firstName": "Charlie",
+        "lastName": "Davis",
+        "address": "303 Birch Boulevard",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "78701",
+        "country": "USA",
+        "phone": "512-555-3456"
     }
 ]

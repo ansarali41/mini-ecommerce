@@ -109,17 +109,17 @@ export default function ProductPage({ params }) {
 
                     <div className="mb-6">
                         <p className="text-sm text-gray-500 mb-1">Category:</p>
-                        <p className="font-medium">{product.categoryName || 'Uncategorized'}</p>
+                        <p className="font-medium">{product.category?.name || 'Uncategorized'}</p>
                     </div>
 
                     <div className="mb-6">
                         <p className="text-sm text-gray-500 mb-1">Availability:</p>
-                        <p className={`font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}
+                        <p className={`font-medium ${product.countInStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {product.countInStock > 0 ? `In Stock (${product.countInStock} available)` : 'Out of Stock'}
                         </p>
                     </div>
 
-                    {product.stock > 0 && (
+                    {product.countInStock > 0 && (
                         <div className="flex flex-wrap items-center gap-4 mb-6">
                             <div className="w-24">
                                 <label htmlFor="quantity" className="text-sm text-gray-500 mb-1 block">
@@ -129,7 +129,7 @@ export default function ProductPage({ params }) {
                                     type="number"
                                     id="quantity"
                                     min="1"
-                                    max={product.stock}
+                                    max={product.countInStock}
                                     value={quantity}
                                     onChange={handleQuantityChange}
                                     className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"

@@ -354,7 +354,7 @@ export default function ManageProductsPage() {
                                         <div className="text-sm text-gray-900">${parseFloat(product.price).toFixed(2)}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{product.countInStock || product.stock || 0}</div>
+                                        <div className="text-sm text-gray-900">{product.countInStock || 0}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <Link href={`/product/${product.id}`} className="text-blue-600 hover:text-blue-900 mr-4">

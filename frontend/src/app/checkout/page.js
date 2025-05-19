@@ -49,6 +49,38 @@ export default function CheckoutPage() {
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
             }));
+            
+            // Fetch customer profile to pre-fill shipping information
+            const fetchCustomerProfile = async () => {
+                try {
+                    const response = await customersApi.getProfile();
+                    const customerData = customersApi.processResponse(response);
+                    
+                    if (customerData) {
+                        console.log('Customer profile fetched for checkout:', customerData);
+                        setFormData(prevState => ({
+                            ...prevState,
+                            firstName: customerData.firstName || prevState.firstName,
+                            lastName: customerData.lastName || prevState.lastName,
+                            address: customerData.address || '',
+                            city: customerData.city || '',
+                            state: customerData.state || '',
+                            zipCode: customerData.zipCode || '',
+                            country: customerData.country || '',
+                            phone: customerData.phone || '',
+                        }));
+                    }
+                } catch (error) {
+                    console.log('No existing customer profile found or error fetching profile:', error);
+                    // Don't display error to user, just continue with default form data
+                    // A 404 is expected if the customer hasn't created a profile yet
+                    if (error.response && error.response.status !== 404) {
+                        console.error('Unexpected error fetching customer profile:', error);
+                    }
+                }
+            };
+            
+            fetchCustomerProfile();
         }
     }, [user]);
 

@@ -238,7 +238,7 @@ export default function ProductsPage() {
                                         </div>
                                         <div className="p-4">
                                             <h3 className="font-semibold text-gray-800">{product?.name || 'Unnamed Product'}</h3>
-                                            <p className="text-gray-600 text-sm mb-2">{product?.categoryName || 'Uncategorized'}</p>
+                                            <p className="text-gray-600 text-sm mb-2">{product?.category?.name || 'Uncategorized'}</p>
                                             <div className="flex justify-between items-center">
                                                 <span className="font-bold text-blue-600">${parseFloat(product?.price || 0).toFixed(2)}</span>
                                                 <div className="flex items-center">
