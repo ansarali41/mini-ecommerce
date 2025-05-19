@@ -13,23 +13,38 @@ export default function Home() {
         const fetchData = async () => {
             try {
                 setLoading(true);
+                console.log('Starting API requests from Home page');
 
                 // Fetch featured products (highest rated)
+                console.log('Fetching featured products...');
                 const productsResponse = await productsApi.getFeatured(4);
-                
+                console.log('Featured products response:', productsResponse);
+
                 // Set products from the response data
                 const processedResponse = productsApi.processResponse(productsResponse);
+                console.log('Processed products:', processedResponse);
                 setFeaturedProducts(processedResponse.products);
 
                 // Fetch categories
+                console.log('Fetching categories...');
                 const categoriesResponse = await categoriesApi.getAll();
+                console.log('Categories response:', categoriesResponse);
 
                 // Set categories from the response data
-                setCategories(categoriesApi.processResponse(categoriesResponse));
+                const processedCategories = categoriesApi.processResponse(categoriesResponse);
+                console.log('Processed categories:', processedCategories);
+                setCategories(processedCategories);
 
                 setLoading(false);
             } catch (error) {
-                console.log('Error fetching homepage data:', error);
+                console.error('Error fetching homepage data:', error);
+                if (error.response) {
+                    console.error('Error response:', error.response.status, error.response.data);
+                } else if (error.request) {
+                    console.error('No response received:', error.request);
+                } else {
+                    console.error('Error message:', error.message);
+                }
                 setFeaturedProducts([]);
                 setCategories([]);
                 setLoading(false);
@@ -37,7 +52,7 @@ export default function Home() {
         };
 
         fetchData();
-    }, [featuredProducts.length, categories.length]);
+    }, []); // Empty dependency array to run only once on mount
 
     return (
         <div className="space-y-12">

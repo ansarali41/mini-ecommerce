@@ -3,6 +3,9 @@ import axios from 'axios';
 // Determine the backend API URL based on environment
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
+// Debug: Log the API URL being used
+console.log('Using API URL:', API_URL);
+
 // Create axios instance with base URL
 const api = axios.create({
     baseURL: API_URL,
@@ -69,22 +72,35 @@ export const authApi = {
 
 // API endpoints for products
 export const productsApi = {
-    getAll: params => api.get('/products', { params }),
-    getById: id => api.get(`/products/${id}`),
+    getAll: params => {
+        console.log('Calling productsApi.getAll with params:', params);
+        return api.get('/products', { params });
+    },
+    getById: id => {
+        console.log('Calling productsApi.getById with id:', id);
+        return api.get(`/products/${id}`);
+    },
     create: productData => api.post('/products', productData),
     update: (id, productData) => api.put(`/products/${id}`, productData),
     delete: id => api.delete(`/products/${id}`),
-    getFeatured: (limit = 4) =>
-        api.get('/products', {
+    getFeatured: (limit = 4) => {
+        console.log('Calling productsApi.getFeatured with limit:', limit);
+        return api.get('/products', {
             params: {
                 limit,
                 sortBy: 'rating',
                 sortOrder: 'DESC',
             },
-        }),
+        });
+    },
     // Helper method to extract products and pagination data from the response
     processResponse: response => {
-        if (!response || !response.data) return { products: [], totalPages: 0, currentPage: 1, totalItems: 0 };
+        console.log('Processing API response:', response);
+
+        if (!response || !response.data) {
+            console.error('API Response is empty or invalid:', response);
+            return { products: [], totalPages: 0, currentPage: 1, totalItems: 0 };
+        }
 
         // Check if response is already paginated
         if (response.data.products && Array.isArray(response.data.products)) {
