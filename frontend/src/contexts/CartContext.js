@@ -37,16 +37,29 @@ export function CartProvider({ children }) {
     const addToCart = (product, quantity = 1) => {
         const parsedQuantity = parseInt(quantity || 1);
 
+        // Check stock availability
+        if (!product.countInStock || product.countInStock < 1) {
+            alert('Sorry, this product is out of stock.');
+            return;
+        }
+
+        // Limit quantity to available stock
+        const safeQuantity = Math.min(parsedQuantity, product.countInStock);
+
         setCart(prevCart => {
             const existingItemIndex = prevCart.findIndex(item => item.id === product.id);
 
             if (existingItemIndex >= 0) {
                 // Item already exists, update quantity
                 const updatedCart = [...prevCart];
-                const newQuantity = updatedCart[existingItemIndex].quantity + parsedQuantity;
+                // Calculate new quantity but ensure it doesn't exceed available stock
+                const currentQuantity = updatedCart[existingItemIndex].quantity;
+                const newQuantity = Math.min(currentQuantity + safeQuantity, product.countInStock);
+
                 updatedCart[existingItemIndex] = {
                     ...updatedCart[existingItemIndex],
                     quantity: newQuantity,
+                    countInStock: product.countInStock, // Update stock information
                 };
                 return updatedCart;
             } else {
@@ -58,7 +71,8 @@ export function CartProvider({ children }) {
                         name: product.name,
                         price: parseFloat(product.price || 0),
                         image: product.image,
-                        quantity: parsedQuantity,
+                        quantity: safeQuantity,
+                        countInStock: product.countInStock,
                     },
                 ];
             }
@@ -75,7 +89,14 @@ export function CartProvider({ children }) {
         }
 
         setCart(prevCart => {
-            return prevCart.map(item => (item.id === productId ? { ...item, quantity: parsedQuantity } : item));
+            return prevCart.map(item => {
+                if (item.id === productId) {
+                    // Ensure quantity doesn't exceed available stock
+                    const safeQuantity = Math.min(parsedQuantity, item.countInStock || 1);
+                    return { ...item, quantity: safeQuantity };
+                }
+                return item;
+            });
         });
     };
 

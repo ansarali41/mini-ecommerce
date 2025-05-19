@@ -41,6 +41,19 @@ const ProductCard = ({ product }) => {
             <div className="p-4">
                 <h3 className="font-semibold">{product?.name || 'Unnamed Product'}</h3>
                 <p className="text-gray-500 text-sm mb-2">{product?.category?.name || 'Uncategorized'}</p>
+
+                {/* Stock Status */}
+                <div className="mb-2">
+                    {product?.countInStock > 0 ? (
+                        <p className="text-sm">
+                            <span className="text-green-600 font-medium">In Stock</span>
+                            <span className="text-gray-500 ml-1">({product.countInStock} available)</span>
+                        </p>
+                    ) : (
+                        <p className="text-sm text-red-600 font-medium">Out of Stock</p>
+                    )}
+                </div>
+
                 <div className="flex justify-between items-center">
                     <span className="font-bold">${parseFloat(product?.price || 0).toFixed(2)}</span>
                     <div className="flex items-center">
@@ -52,7 +65,13 @@ const ProductCard = ({ product }) => {
                     <Link href={`/product/${product?.id || ''}`} className="bg-blue-600 text-white py-1 px-3 rounded text-sm flex-1 text-center hover:bg-blue-700 shadow-sm">
                         View Details
                     </Link>
-                    <button onClick={handleAddToCart} className="bg-green-600 text-white py-1 px-3 rounded text-sm hover:bg-green-700 shadow-sm cursor-pointer">
+                    <button
+                        onClick={handleAddToCart}
+                        disabled={!(product?.countInStock > 0)}
+                        className={`py-1 px-3 rounded text-sm shadow-sm cursor-pointer ${
+                            product?.countInStock > 0 ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                    >
                         Add to Cart
                     </button>
                 </div>

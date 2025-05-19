@@ -2,6 +2,7 @@
 
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaTrash, FaArrowLeft, FaShoppingCart } from 'react-icons/fa';
@@ -78,15 +79,27 @@ export default function CartPage() {
                                 <div className="md:grid md:grid-cols-5 gap-4 items-center">
                                     {/* Product */}
                                     <div className="md:col-span-2 flex items-center mb-4 md:mb-0 text-gray-600">
-                                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0 mr-4 text-gray-600">
+                                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0 mr-4 text-gray-600 relative">
                                             {item.image ? (
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                <Image
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    layout="fill"
+                                                    objectFit="cover"
+                                                    unoptimized={!item.image.startsWith('/')} // Unoptimize external URLs
+                                                />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
                                             )}
                                         </div>
                                         <div>
                                             <h3 className="font-semibold">{item.name}</h3>
+                                            {/* Stock information */}
+                                            {item.countInStock > 0 ? (
+                                                <p className="text-xs text-green-600">In Stock: {item.countInStock} available</p>
+                                            ) : (
+                                                <p className="text-xs text-red-600 font-medium">Out of Stock</p>
+                                            )}
                                             <button onClick={() => handleRemoveItem(item.id)} className="text-red-500 text-sm flex items-center mt-1 hover:text-red-700">
                                                 <FaTrash className="mr-1" size={12} /> Remove
                                             </button>
@@ -104,10 +117,15 @@ export default function CartPage() {
                                         <input
                                             type="number"
                                             min="1"
-                                            value={item.quantity}
+                                            max={item.countInStock || 1}
+                                            value={item.quantity > (item.countInStock || 0) ? item.countInStock || 1 : item.quantity}
                                             onChange={e => handleQuantityChange(item.id, e.target.value)}
-                                            className="w-16 p-1 border rounded text-center"
+                                            className={`w-16 p-1 border rounded text-center ${!item.countInStock || item.countInStock < 1 ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                            disabled={!item.countInStock || item.countInStock < 1}
                                         />
+                                        {item.quantity > (item.countInStock || 0) && item.countInStock > 0 && (
+                                            <p className="text-xs text-orange-500 mt-1">Adjusted to max available</p>
+                                        )}
                                     </div>
 
                                     {/* Subtotal */}
@@ -157,10 +175,20 @@ export default function CartPage() {
                             <span className="font-bold text-lg">${(parseFloat(totalPrice || 0) + parseFloat(totalPrice || 0) * 0.07).toFixed(2)}</span>
                         </div>
 
+                        {/* Out of stock warning */}
+                        {cart.some(item => !item.countInStock || item.countInStock < 1) && (
+                            <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                                <p className="font-medium">Some items are out of stock</p>
+                                <p>Please remove out-of-stock items before proceeding.</p>
+                            </div>
+                        )}
+
                         <button
                             onClick={proceedToCheckout}
-                            disabled={isSubmitting}
-                            className={`w-full py-3 rounded-lg text-white font-bold ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                            disabled={isSubmitting || cart.some(item => !item.countInStock || item.countInStock < 1)}
+                            className={`w-full py-3 rounded-lg text-white font-bold ${
+                                isSubmitting || cart.some(item => !item.countInStock || item.countInStock < 1) ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
                         >
                             {isSubmitting ? 'Processing...' : 'Proceed to Checkout'}
                         </button>

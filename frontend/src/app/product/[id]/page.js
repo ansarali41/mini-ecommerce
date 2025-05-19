@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { productsApi } from '../../../utils/api';
 import { useCart } from '../../../contexts/CartContext';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -73,9 +74,15 @@ export default function ProductPage({ params }) {
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Product Image */}
                 <div className="w-full md:w-1/2">
-                    <div className="bg-gray-100 rounded-lg overflow-hidden h-[400px]">
+                    <div className="bg-gray-100 rounded-lg overflow-hidden h-[400px] relative">
                         {product.image ? (
-                            <img src={product.image} alt={product.name || 'Product'} className="w-full h-full object-contain" />
+                            <Image
+                                src={product.image}
+                                alt={product.name || 'Product'}
+                                layout="fill"
+                                objectFit="contain"
+                                unoptimized={!product.image.startsWith('/')} // Unoptimize external URLs
+                            />
                         ) : (
                             <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">No Image Available</div>
                         )}
