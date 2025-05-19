@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 
 const ProductCard = ({ product }) => {
@@ -26,7 +27,13 @@ const ProductCard = ({ product }) => {
         <div className="border rounded-lg overflow-hidden hover:shadow-lg transition duration-300">
             <div className="h-48 bg-gray-200 relative">
                 {product?.image ? (
-                    <img src={product.image} alt={product?.name || 'Product'} className="h-full w-full object-cover" />
+                    <Image
+                        src={product.image}
+                        alt={product?.name || 'Product'}
+                        layout="fill"
+                        objectFit="cover"
+                        unoptimized={!product.image.startsWith('/')} // Unoptimize external URLs
+                    />
                 ) : (
                     <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
                 )}

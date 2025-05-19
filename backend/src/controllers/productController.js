@@ -6,15 +6,14 @@ const { Op } = require('sequelize');
 // Get all products with filtering
 const getAllProducts = async (req, res) => {
     try {
-        const { category, minPrice, maxPrice, minRating, search, userId, page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
+        const { categoryId, minPrice, maxPrice, minRating, search, userId, page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
 
         // Build query condition
         const whereCondition = {};
-        const categoryCondition = {};
 
-        // Filter by category
-        if (category) {
-            categoryCondition.name = category;
+        // Filter by categoryId
+        if (categoryId) {
+            whereCondition.categoryId = categoryId;
         }
 
         // Filter by price range
@@ -54,7 +53,7 @@ const getAllProducts = async (req, res) => {
                 {
                     model: Category,
                     as: 'category',
-                    where: Object.keys(categoryCondition).length ? categoryCondition : undefined,
+                    // No separate where clause for category now - we filter by categoryId directly
                 },
                 {
                     model: require('../models').User,

@@ -1,9 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { productsApi, categoriesApi } from '../../utils/api';
 import { useCart } from '../../contexts/CartContext'; // Updated import path
+
+// Debounce function to prevent too many API calls
+const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+};
 
 export default function ProductsPage() {
     const [products, setProducts] = useState([]);
@@ -12,43 +30,71 @@ export default function ProductsPage() {
     const [error, setError] = useState(null);
     const { addToCart } = useCart(); // Get addToCart function from cart context
 
-    // Log cart context on mount for debugging
-    useEffect(() => {
-        console.log('Cart context loaded:', { addToCartExists: typeof addToCart === 'function' });
-    }, [addToCart]);
+    // Server-side filter state (these trigger API calls when changed)
+    const [activeFilters, setActiveFilters] = useState({
+        categoryId: '',
+        minPrice: 0,
+        maxPrice: 1000,
+        search: '',
+        minRating: 0,
+    });
 
-    // Filters
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
-    const [searchQuery, setSearchQuery] = useState('');
-    const [minRating, setMinRating] = useState(0);
+    // UI state for filters (these don't trigger API calls until applied)
+    const [localFilters, setLocalFilters] = useState({
+        categoryId: '',
+        minPrice: 0,
+        maxPrice: 1000,
+        search: '',
+        minRating: 0,
+    });
 
+    // Track if filters have been modified
+    const [filtersModified, setFiltersModified] = useState(false);
+
+    // Use debounced search to avoid too many API calls when typing
+    const debouncedSearch = useDebounce(activeFilters.search, 500);
+
+    // Initial load of categories
     useEffect(() => {
-        const fetchData = async () => {
+        const loadCategories = async () => {
+            try {
+                const categoriesResponse = await categoriesApi.getAll();
+                setCategories(categoriesApi.processResponse(categoriesResponse));
+            } catch (err) {
+                console.error('Error fetching categories:', err);
+            }
+        };
+
+        loadCategories();
+    }, []);
+
+    // Load products when activeFilters change
+    useEffect(() => {
+        const fetchProducts = async () => {
             try {
                 setLoading(true);
 
                 // Prepare filter params
                 const params = {};
 
-                if (selectedCategory) {
-                    params.categoryId = selectedCategory;
+                if (activeFilters.categoryId) {
+                    params.categoryId = activeFilters.categoryId;
                 }
 
-                if (priceRange.min > 0) {
-                    params.minPrice = priceRange.min;
+                if (activeFilters.minPrice > 0) {
+                    params.minPrice = activeFilters.minPrice;
                 }
 
-                if (priceRange.max < 1000) {
-                    params.maxPrice = priceRange.max;
+                if (activeFilters.maxPrice < 1000) {
+                    params.maxPrice = activeFilters.maxPrice;
                 }
 
-                if (searchQuery) {
-                    params.search = searchQuery;
+                if (debouncedSearch) {
+                    params.search = debouncedSearch;
                 }
 
-                if (minRating > 0) {
-                    params.minRating = minRating;
+                if (activeFilters.minRating > 0) {
+                    params.minRating = activeFilters.minRating;
                 }
 
                 console.log('Applying filters:', params);
@@ -59,23 +105,16 @@ export default function ProductsPage() {
 
                 // Ensure products is always an array
                 setProducts(productsApi.processResponse(productsResponse));
-
-                // Fetch categories
-                const categoriesResponse = await categoriesApi.getAll();
-
-                // Ensure categories is always an array
-                setCategories(categoriesApi.processResponse(categoriesResponse));
-
                 setLoading(false);
             } catch (err) {
-                console.log('Error fetching data:', err);
+                console.log('Error fetching products:', err);
                 setError('Failed to fetch products. Please try again later.');
                 setLoading(false);
             }
         };
 
-        fetchData();
-    }, [selectedCategory, priceRange, searchQuery, minRating]);
+        fetchProducts();
+    }, [activeFilters, debouncedSearch]);
 
     // Handler for adding items to cart
     const handleAddToCart = product => {
@@ -101,30 +140,59 @@ export default function ProductsPage() {
         }
     };
 
-    const handleCategoryChange = e => {
-        setSelectedCategory(e.target.value);
+    // Update local filter state
+    const updateLocalFilter = (key, value) => {
+        setLocalFilters(prev => ({
+            ...prev,
+            [key]: value,
+        }));
+        setFiltersModified(true);
     };
 
-    const handlePriceChange = (e, type) => {
-        setPriceRange({
-            ...priceRange,
-            [type]: Number(e.target.value),
-        });
+    // Update local search filter
+    const handleLocalSearchChange = e => {
+        updateLocalFilter('search', e.target.value);
     };
 
-    const handleRatingChange = e => {
-        setMinRating(Number(e.target.value));
+    // Update local category filter
+    const handleLocalCategoryChange = e => {
+        updateLocalFilter('categoryId', e.target.value);
     };
 
-    const handleSearchChange = e => {
-        setSearchQuery(e.target.value);
+    // Update local price range filter
+    const handleLocalPriceChange = (e, type) => {
+        const value = Number(e.target.value);
+        setLocalFilters(prev => ({
+            ...prev,
+            [type === 'min' ? 'minPrice' : 'maxPrice']: value,
+        }));
+        setFiltersModified(true);
     };
 
+    // Update local rating filter
+    const handleLocalRatingChange = e => {
+        updateLocalFilter('minRating', Number(e.target.value));
+    };
+
+    // Apply all filters at once
+    const applyFilters = () => {
+        setActiveFilters({ ...localFilters });
+        setFiltersModified(false);
+    };
+
+    // Reset all filters to default values
     const resetFilters = () => {
-        setSelectedCategory('');
-        setPriceRange({ min: 0, max: 1000 });
-        setSearchQuery('');
-        setMinRating(0);
+        const defaultFilters = {
+            categoryId: '',
+            minPrice: 0,
+            maxPrice: 1000,
+            search: '',
+            minRating: 0,
+        };
+
+        setLocalFilters(defaultFilters);
+        setActiveFilters(defaultFilters);
+        setFiltersModified(false);
     };
 
     if (loading) {
@@ -149,8 +217,8 @@ export default function ProductsPage() {
                         <label className="block text-sm font-medium mb-2 text-gray-700">Search</label>
                         <input
                             type="text"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
+                            value={localFilters.search}
+                            onChange={handleLocalSearchChange}
                             className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800 placeholder-gray-500"
                             placeholder="Search products..."
                         />
@@ -160,8 +228,8 @@ export default function ProductsPage() {
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-2 text-gray-700">Category</label>
                         <select
-                            value={selectedCategory}
-                            onChange={handleCategoryChange}
+                            value={localFilters.categoryId}
+                            onChange={handleLocalCategoryChange}
                             className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
                         >
                             <option value="">All Categories</option>
@@ -180,8 +248,8 @@ export default function ProductsPage() {
                         <div className="flex items-center gap-2">
                             <input
                                 type="number"
-                                value={priceRange.min}
-                                onChange={e => handlePriceChange(e, 'min')}
+                                value={localFilters.minPrice}
+                                onChange={e => handleLocalPriceChange(e, 'min')}
                                 className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
                                 min="0"
                                 placeholder="Min"
@@ -189,8 +257,8 @@ export default function ProductsPage() {
                             <span className="text-gray-700">-</span>
                             <input
                                 type="number"
-                                value={priceRange.max}
-                                onChange={e => handlePriceChange(e, 'max')}
+                                value={localFilters.maxPrice}
+                                onChange={e => handleLocalPriceChange(e, 'max')}
                                 className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
                                 min="0"
                                 placeholder="Max"
@@ -201,15 +269,26 @@ export default function ProductsPage() {
                     {/* Rating Filter */}
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-2 text-gray-700">
-                            Minimum Rating: <span className="font-semibold text-blue-600">{minRating}</span>
+                            Minimum Rating: <span className="font-semibold text-blue-600">{localFilters.minRating}</span>
                         </label>
-                        <input type="range" min="0" max="5" step="0.5" value={minRating} onChange={handleRatingChange} className="w-full accent-blue-600" />
+                        <input type="range" min="0" max="5" step="0.5" value={localFilters.minRating} onChange={handleLocalRatingChange} className="w-full accent-blue-600" />
                     </div>
+
+                    {/* Apply Filters Button */}
+                    <button
+                        onClick={applyFilters}
+                        disabled={!filtersModified}
+                        className={`w-full mb-2 py-2 px-4 rounded text-white font-medium shadow-sm border ${
+                            filtersModified ? 'bg-blue-600 hover:bg-blue-700 border-blue-700' : 'bg-blue-400 cursor-not-allowed border-blue-400'
+                        }`}
+                    >
+                        Apply Filters
+                    </button>
 
                     {/* Reset Filters */}
                     <button
                         onClick={resetFilters}
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 font-medium shadow-sm border border-blue-700"
+                        className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded hover:bg-gray-300 transition duration-200 font-medium shadow-sm border border-gray-300"
                     >
                         Reset Filters
                     </button>
@@ -231,7 +310,13 @@ export default function ProductsPage() {
                                     <div key={product?.id || Math.random()} className="border rounded-lg overflow-hidden hover:shadow-lg transition duration-300 bg-white">
                                         <div className="h-48 bg-gray-200 relative">
                                             {product?.image ? (
-                                                <img src={product.image} alt={product?.name || 'Product'} className="h-full w-full object-cover" />
+                                                <Image
+                                                    src={product.image}
+                                                    alt={product?.name || 'Product'}
+                                                    layout="fill"
+                                                    objectFit="cover"
+                                                    unoptimized={!product.image.startsWith('/')} // Unoptimize external URLs
+                                                />
                                             ) : (
                                                 <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
                                             )}
