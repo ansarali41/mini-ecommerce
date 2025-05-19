@@ -49,13 +49,13 @@ export default function CheckoutPage() {
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
             }));
-            
+
             // Fetch customer profile to pre-fill shipping information
             const fetchCustomerProfile = async () => {
                 try {
                     const response = await customersApi.getProfile();
                     const customerData = customersApi.processResponse(response);
-                    
+
                     if (customerData) {
                         console.log('Customer profile fetched for checkout:', customerData);
                         setFormData(prevState => ({
@@ -79,7 +79,7 @@ export default function CheckoutPage() {
                     }
                 }
             };
-            
+
             fetchCustomerProfile();
         }
     }, [user]);
