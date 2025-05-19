@@ -61,11 +61,11 @@ const createOrder = async (req, res) => {
             }
 
             // Check stock availability
-            if (product.stock < quantity) {
+            if (product.countInStock < quantity) {
                 await transaction.rollback();
                 return res.status(400).json({
                     success: false,
-                    message: `Insufficient stock for product: ${product.name}. Available: ${product.stock}, Requested: ${quantity}`,
+                    message: `Insufficient stock for product: ${product.name}. Available: ${product.countInStock}, Requested: ${quantity}`,
                 });
             }
 
@@ -82,7 +82,9 @@ const createOrder = async (req, res) => {
             });
 
             // Update product stock
-            await product.update({ stock: product.stock - quantity }, { transaction });
+            const newStockLevel = product.countInStock - quantity;
+            console.log(`Updating stock for product ${product.name} (ID: ${productId}): ${product.countInStock} => ${newStockLevel}`);
+            await product.update({ countInStock: newStockLevel }, { transaction });
         }
 
         // Generate a unique order number (format: ORD-YYYYMMDD-XXXXX)

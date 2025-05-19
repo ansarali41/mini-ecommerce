@@ -186,6 +186,11 @@ export default function CheckoutPage() {
                 throw new Error('Failed to create order');
             }
 
+            // Check for specific stock-related errors
+            if (orderResponse.data.error && orderResponse.data.error.includes('Insufficient stock')) {
+                throw new Error(orderResponse.data.error || 'Some items are out of stock. Please return to cart and update quantities.');
+            }
+
             // Extract order ID
             const order = orderResponse.data.order || orderResponse.data;
             const newOrderId = order.id || order._id;

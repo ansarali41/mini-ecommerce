@@ -32,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
+                validate: {
+                    min: {
+                        args: [0],
+                        msg: 'Stock cannot be negative',
+                    },
+                },
             },
             rating: {
                 type: DataTypes.DECIMAL(3, 2),
